@@ -49,10 +49,6 @@ display, as defined below.
     *) The game runs in a 600 by 500 window, with (0,0) as the lower left corner.
 
 """
-from Expression import *
-from LEDProgram import *
-from Evaluater import *
-
 BLACK = (  0,   0,   0)
 WHITE = (255, 255, 255)
 BLUE =  (  0,   0, 255)
@@ -67,33 +63,32 @@ def isPoint(I):
     '''
     # extact the tuple from the LED point
     if isinstance(I,tuple):
-        tup,point = I
-        if isinstance(point,list) and len(point)==2:
-            # convert Fraction to int if point[0] or point[1] is a Fraction
-            x=int(point[0])
-            y=int(point[1])
-            return tup=='tuple' and x in range(0,1001) and y in range(0,801)
+        point = I
+        if len(point)==2:
+            x=point[0]
+            y=point[1]
+            return x in range(0,1001) and y in range(0,801)
     return False
 
 def isColor(I):
     if isinstance(I,tuple):
-        tup,color = I
-        if isinstance(color,list) and len(color)==3:
+        color = I
+        if len(color)==3:
             return all(c in range(0,256) for c in color)
     return False
 
 def isSegment(I):
     if isinstance(I,tuple):
-        tup,segment = I
-        if isinstance(segment,list) and len(segment)==4:
+        segment = I
+        if len(segment)==4:
             t,p,q,c=segment
             return t=="`seg" and isPoint(p) and isPoint(q) and isColor(c)
     return False
 
 def isTriangle(I):
     if isinstance(I,tuple):
-        tup,triangle = I
-        if isinstance(triangle,list) and len(triangle)==5:
+        triangle = I
+        if len(triangle)==5:
             t,p,q,r,c=triangle
             return t=="`fTri" and isNonCollinear(p,q,r) and isColor(c)
     return False
@@ -105,8 +100,8 @@ def isNonCollinear(p,q,r):
 
 def slope(p,q):
     if isPoint(p) and isPoint(q):
-        (tup,[px,py])=p
-        (tup,[qx,qy])=q
+        (px,py)=p
+        (qx,qy)=q
         if not px-qx==0:
             return (py-qy)/(px-qx)
         else:
@@ -114,47 +109,47 @@ def slope(p,q):
 
 def isCircle(I):
     if isinstance(I,tuple):
-        tup,circle = I
-        if isinstance(circle,list) and len(circle)==4:
+        circle = I
+        if len(circle)==4:
             t,p,r,c=circle
             return t=="`circ" and isPoint(p) and isinstance(r,int) and r>0 and isColor(c)
     return False
 
 def isDisc(I):
     if isinstance(I,tuple):
-        tup,circle = I
-        if isinstance(circle,list) and len(circle)==4:
+        circle = I
+        if len(circle)==4:
             t,p,r,c=circle
             return t=="`disc" and isPoint(p) and isinstance(r,int) and r>0 and isColor(c)
     return False
 
 def isText(I):
     if isinstance(I,tuple):
-        tup,text = I
-        if isinstance(text,list) and len(text)==5:
+        text = I
+        if len(text)==5:
             t,s,p,n,c=text
-            return t=="`txt" and isinstance(s,tuple) and s[0]=='string' and isPoint(p) and isColor(c) and isinstance(n,int) and n in range(4,101)
+            return t=="`txt" and isinstance(s,str) and isPoint(p) and isColor(c) and isinstance(n,int) and n in range(4,101)
     return False
 
 def isClick(C):
     return isPoint(C) or C=="`nil"
 
 def drawSegment(screen,L):
-    (tup,[tup,(tup,[x1,y1]),(tup,[x2,y2]),(tup,color)]) = L
+    tup,(x1,y1),(x2,y2),color=L
     W,H=displaySize()
     p1 = [x1,H-y1]
     p2 = [x2,H-y2]
     pygame.draw.line(screen, tuple(color), p1,p2, 5)
 
 def drawCircle(screen,C):
-    (tup,[tup,(tup,[x,y]),radius,(tup,color)]) = C
+    tup,(x,y),radius,color= C
     x=int(x)
     y=int(y)
     center = [x,H-y]
     pygame.draw.circle(screen, tuple(color), center, radius,1)
 
 def drawDisc(screen,C):
-    (tup,[tup,(tup,[x,y]),radius,(tup,color)]) = C
+    tup,(x,y),radius,color= C
     x=int(x)
     y=int(y)
     W,H=displaySize()
@@ -162,13 +157,13 @@ def drawDisc(screen,C):
     pygame.draw.circle(screen, tuple(color), center, radius,0)
 
 def drawText(screen,Text):
-    (tup,[t,string,center,fontSize,(tup,color)]) = Text
-    (tup,[x,y]) = center
+    (tup,string,center,fontSize,color) = Text
+    [x,y]= center
     # (0,0) is left botton
     W,H=displaySize()    
     y=H-int(y)
-    string = prettyString(string)
-    T = string[1:-1]
+    #string = prettyString(string)
+    T = string
     if pygame.font:
         font = pygame.font.Font(None, fontSize)
         text = font.render(T, 1, color)
@@ -177,9 +172,8 @@ def drawText(screen,Text):
         screen.blit(text, textpos)
 
 def drawTriangle(screen,Tri):
-    (tup,[tup,(tup,p),(tup,q),(tup,r),(tup,color)]) = Tri
+    tup,p,q,r,color= Tri
     W,H=displaySize()
-    #x or y might be Franction(12,1) instead of 12
     p=(int(p[0]),int(H-p[1]))
     q=(int(q[0]),int(H-q[1]))
     r=(int(r[0]),int(H-r[1]))
