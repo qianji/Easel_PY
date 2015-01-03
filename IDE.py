@@ -200,26 +200,28 @@ def paddleHelper(S,flag):
     return buildState(S[0],nextPaddle,S[2],S[3],S[4],S[5],S[6],S[7]) 
 
 def paddleMove(pad,flag):
-    TL=nextPaddle(pad[0],flag)
-    TR=nextPaddle(pad[1],flag)
-    BL = nextPaddle(pad[2],flag)
-    BR = nextPaddle(pad[3],flag)
+    l=outOfBoundsL(pad[0])
+    r = outOfBoundsR(pad[1])
+    TL=nextPaddle(pad[0],flag,l,r)
+    TR=nextPaddle(pad[1],flag,l,r)
+    BL = nextPaddle(pad[2],flag,l,r)
+    BR = nextPaddle(pad[3],flag,l,r)
     return paddle(TL,TR,BL,BR) 
 
-def nextPaddle(p,flag):
-    nextX = nextPX(p,flag)
+def nextPaddle(p,flag,l,r):
+    nextX = nextPX(p,flag,l,r)
     return point(nextX,p[1])
 
-def nextPX(p,flag):
+def nextPX(p,flag,l,r):
     val=20
-    return p[0]+val if flag and not outOfBoundsR(p) else \
-    p[0]-val if not flag and not outOfBoundsL(p) else \
+    return p[0]+val if flag and not r else \
+    p[0]-val if not flag and not l else \
     p[0]
 
 def outOfBoundsL(p):
     return p[0]<=400
 def outOfBoundsR(p):
-    return p[1] >=1000
+    return p[0] >=1000
 
 def ballMove(B):
     return ball(nextCenter(B[0],B[2],B[3]),B[1],B[2],B[3])
@@ -257,6 +259,11 @@ def hWallCollide(B):
     nBox=ballBox(B)
     return (box[2][1] <= 0) or (box[1][1] >= 800) or \
 		(nBox[2][1] < 0) or (nBox[1][1] > 800)
+
+def deadthCollide(B):
+    box=ballBox(B)
+    nBox=ballBox(ballMove(B))
+    return box[2][1]<=0 or nBox[2][1]<=0
 
 def brickBool(B,bricks):
     collitions = bricksCollitions(B,bricks)
