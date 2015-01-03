@@ -169,7 +169,9 @@ originPoint = point(-1000,-800)
 ballStart = ball(point(700, 200), 7, 20, 16)
 ballDead = ball(point(700, 200), 7, 0, 0)
 paddleStart = paddle(pTL, pTR, pBL, pBR)
-brickStart = {brick1, brick2, brick3, brick4, brick5, brick6, brick7, brick8, brick9, brick10, brick11, brick12, brick13, brick14, brick15, brick5t, brick15t, brick10t}
+
+def brickStart():
+    return {brick1, brick2, brick3, brick4, brick5, brick6, brick7, brick8, brick9, brick10, brick11, brick12, brick13, brick14, brick15, brick5t, brick15t, brick10t}
 
 topBorder = segment(boardTL, boardTR, dBlack)
 leftBorder = segment(boardTL, boardBL, dBlack)
@@ -183,15 +185,30 @@ rbBorder = segment(resetBL, resetBR, dGreen)
 
 staticImgs = {reset, topBorder, leftBorder, rightBorder, botBorder, rtBorder, rlBorder, rrBorder, rbBorder}
 
+deadState = buildState(ballDead, paddleStart, brickStart(), False, True, [], [], 0)
+winState = buildState(ballDead, paddleStart, [], True, False, [], [], 0)
+
 def initialState():
-    return buildState(ballStart, paddleStart, brickStart,0,0,{},{},0)
+    return buildState(ballStart, paddleStart, brickStart(),0,0,[],[],0)
+
 def transition(I,S):
     keys=I[1]
     ballMoveState = sClean(sHelper(motionHelper(S))) 
-    return paddleHelper(ballMoveState, 1) if equalList(keys, "d") else \
+    return  winState if len(S[2])==0 else \
+            initialState() if clickReset(I) else \
+            deadState if deadthCollide(S[0]) else \
+            paddleHelper(ballMoveState, 1) if equalList(keys, "d") else \
             paddleHelper(ballMoveState, 0) if equalList(keys, "a")  else \
             ballMoveState 
 
+def clickReset(I):
+    click = I[0]
+    return not click==None and inBox(click,point(0,800),point(200,800),point(0,700),point(200,700))
+
+def inBox(click,topL,topR,botL,botR):
+    x=click[0]
+    y=click[1]
+    return x>topL[0] and x>botL[0] and x<topR[0] and x<botR[0] and y>botR[0] and y>botL[1] and y<topR[1] and y<topL[1] 
 def equalList(keys,char):
     return len(keys)>0 and keys[0]==char
 
@@ -284,6 +301,12 @@ def brickCollide(B,brick):
         "h" if (hCollision(ballMove(B), brick) or hCollision(B, brick)) else \
         "n"
 
+def pCollide(B,brick):
+    return "b" if cornerCollision(ballMove(B), brick) or cornerCollision(B, brick) else \
+        "v" if (vCollision(ballMove(B), brick) or vCollision(B, brick)) else \
+        "h" if (hCollision(ballMove(B), brick) or hCollision(B, brick)) else \
+        "n"
+
 def vCollision(B,L):
     box=ballBox(B)
     return ((box[0][1] >= L[3][1] and box[3][1] < L[3][1]) or (box[3][1] <= L[0][1] and box[0][1] > L[0][1])) \
@@ -302,7 +325,17 @@ def ballBox(B):
     return (point(B[0][0]-B[1],B[0][1]+B[1]),point(B[0][0]+B[1],B[0][1]+B[1]), point(B[0][0]-B[1],B[0][1]-B[1]), point(B[0][0]+B[1],B[0][1]-B[1]))
 
 def motionHelper(S):
-    return buildState(ballMove(nextBall(S)),S[1],S[2],S[3],S[4],S[5],S[6],S[7])
+    tempB=S[0]
+    deadBricks=None
+    for brick in S[2]:
+        if brickCollide(tempB,brick) in ["b","v","h"]:
+            deadBricks=brick
+            break
+    if not deadBricks==None:
+        S[2].remove(deadBricks)
+    return buildState(ballMove(nextBall(S)), S[1], S[2], S[3], S[4], S[5],S[6],S[7]+1)
+
+    #return buildState(ballMove(nextBall(S)),S[1],S[2],S[3],S[4],S[5],S[6],S[7])
 
 def sHelper(S):
     return S
@@ -310,7 +343,9 @@ def sHelper(S):
 def sClean(S):
     return (S[0],S[1],S[2],S[3],S[4],S[5],S[6],S[7]+1)
 def images(S):
-    return set.union(staticImgs,ballImg(S[0]),padImg(S[1]),brImg(S[2]))
+    return set.union(staticImgs,ballImg(S[0]),padImg(S[1]),brImg(S[2])) if not S[4] and not S[3] else \
+            set.union(staticImgs,{text("You win",point(715,400),65,dBlue)}) if S[3] else \
+            set.union(staticImgs,{text("You died",point(715,400),65,dRed)})
 
 def ballImg(b):
     p=b[0]
@@ -393,11 +428,12 @@ def play():
                     done=True
                     sys.exit()
                 else:
-                    keys.append(chr(event.key));
+                    keys.append(chr(event.key))
             elif event.type == MOUSEBUTTONDOWN:
                 click = pygame.mouse.get_pos()
                 # update click in Program
                 click = (click[0],size[1]-click[1])
+        #print(keys)
         I = (click,keys)
         S= transition(I,S)
         imgs = images(S)
