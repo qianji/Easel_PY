@@ -12,7 +12,7 @@ def click(cl,p):
 def gameInput(cl,k):
     return (cl,k)
 def text(s,p,n,c):
-    return ("`txt",s,p,n,c)
+    return ("txt",s,p,n,c)
 def brick(tl,tr,bl,br):
     return (tl,tr,bl,br)
 def ball(c,r,x,y):
@@ -22,16 +22,16 @@ def paddle(tl,tr,bl,br):
     return (tl,tr,bl,br)
 
 def segment(p,r,c):
-    return ("`seg",p,r,c)
+    return ("seg",p,r,c)
 
 def buildState(ba,p,br,c,d,u,e,t):
     return (ba,p,br,c,d,u,e,t)
 
 def fTri(p,q,r,c):
-    return ("`fTri",p,q,r,c)
+    return ("fTri",p,q,r,c)
 
 def disc(p,r,c):
-    return ("`disc",p,r,c)
+    return ("disc",p,r,c)
 dBlack = color(0, 0, 0)
 dRed = color(255, 0, 0)
 dOrange = color(255, 128, 0)
@@ -171,8 +171,8 @@ ballDead = ball(point(700, 200), 7, 0, 0)
 paddleStart = paddle(pTL, pTR, pBL, pBR)
 
 def brickStart():
-    return {brick1, brick2, brick3, brick4, brick5, brick6, brick7, brick8, brick9, brick10, brick11, brick12, brick13, brick14, brick15, brick5t, brick15t, brick10t}
-
+    #return {brick1, brick2, brick3, brick4, brick5, brick6, brick7, brick8, brick9, brick10, brick11, brick12, brick13, brick14, brick15, brick5t, brick15t, brick10t}
+    return {brick2}
 topBorder = segment(boardTL, boardTR, dBlack)
 leftBorder = segment(boardTL, boardBL, dBlack)
 rightBorder = segment(boardTR, boardBR, dBlack)
@@ -361,11 +361,13 @@ def boxImg(L,c):
     TR=L[1]
     BL=L[2]
     BR=L[3]
-    return {segment(TL,TR,dBlack),segment(TL, BL, dBlack), segment(BL, BR, dBlack), segment(TR, BR, dBlack),fTri(TL, BR, BL, c), fTri(TL, TR, BR, c)}
+    return {fTri(TL, BR, BL, c), fTri(TL, TR, BR, c),segment(TL,TR,dBlack),segment(TL, BL, dBlue), segment(BL, BR, dRed), segment(TR, BR, dViolet)}
 def brImg(B):
     a = set()
     for br in B:
         a= set.union(a,boxImg(br,dOrange))
+    for i in a:
+        print(i)
     return a
 def sImg(dust):
     return set() if len(dust)==0 else disc(dust[2],dust[3],dRed)

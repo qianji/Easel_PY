@@ -82,7 +82,7 @@ def isSegment(I):
         segment = I
         if len(segment)==4:
             t,p,q,c=segment
-            return t=="`seg" and isPoint(p) and isPoint(q) and isColor(c)
+            return t=="seg" and isPoint(p) and isPoint(q) and isColor(c)
     return False
 
 def isTriangle(I):
@@ -90,7 +90,7 @@ def isTriangle(I):
         triangle = I
         if len(triangle)==5:
             t,p,q,r,c=triangle
-            return t=="`fTri" and isNonCollinear(p,q,r) and isColor(c)
+            return t=="fTri" and isNonCollinear(p,q,r) and isColor(c)
     return False
 
 def isNonCollinear(p,q,r):
@@ -112,7 +112,7 @@ def isCircle(I):
         circle = I
         if len(circle)==4:
             t,p,r,c=circle
-            return t=="`circ" and isPoint(p) and isinstance(r,int) and r>0 and isColor(c)
+            return t=="circ" and isPoint(p) and isinstance(r,int) and r>0 and isColor(c)
     return False
 
 def isDisc(I):
@@ -120,7 +120,7 @@ def isDisc(I):
         circle = I
         if len(circle)==4:
             t,p,r,c=circle
-            return t=="`disc" and isPoint(p) and isinstance(r,int) and r>0 and isColor(c)
+            return t=="disc" and isPoint(p) and isinstance(r,int) and r>0 and isColor(c)
     return False
 
 def isText(I):
@@ -128,18 +128,18 @@ def isText(I):
         text = I
         if len(text)==5:
             t,s,p,n,c=text
-            return t=="`txt" and isinstance(s,str) and isPoint(p) and isColor(c) and isinstance(n,int) and n in range(4,101)
+            return t=="txt" and isinstance(s,str) and isPoint(p) and isColor(c) and isinstance(n,int) and n in range(4,101)
     return False
 
 def isClick(C):
-    return isPoint(C) or C=="`nil"
+    return isPoint(C) or C==None
 
 def drawSegment(screen,L):
     tup,(x1,y1),(x2,y2),color=L
     W,H=displaySize()
     p1 = [x1,H-y1]
     p2 = [x2,H-y2]
-    pygame.draw.line(screen, tuple(color), p1,p2, 5)
+    pygame.draw.line(screen, tuple(color), p1,p2, 2)
 
 def drawCircle(screen,C):
     tup,(x,y),radius,color= C
@@ -174,9 +174,9 @@ def drawText(screen,Text):
 def drawTriangle(screen,Tri):
     tup,p,q,r,color= Tri
     W,H=displaySize()
-    p=(int(p[0]),int(H-p[1]))
-    q=(int(q[0]),int(H-q[1]))
-    r=(int(r[0]),int(H-r[1]))
+    p=(p[0],H-p[1])
+    q=(q[0],H-q[1])
+    r=(r[0],H-r[1])
     pygame.draw.polygon(screen, tuple(color), [p,q,r], 0)
 
 def drawImages(screen,images):
