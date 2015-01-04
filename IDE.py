@@ -166,7 +166,7 @@ brick15tBR = point(999, 650)
 brick15t = brick(brick15tTL, brick15tTR, brick15tBL, brick15tBR)
 
 originPoint = point(-1000,-800)
-ballStart = ball(point(700, 200), 7, 20, 16)
+ballStart = ball(point(700, 200), 7, 14, 12)
 ballDead = ball(point(700, 200), 7, 0, 0)
 paddleStart = paddle(pTL, pTR, pBL, pBR)
 
@@ -192,13 +192,15 @@ def initialState():
 
 def transition(I,S):
     keys=I[1]
-    ballMoveState = sClean(sHelper(motionHelper(S))) 
+    ballMove= sClean(sHelper(motionHelper(S)))
+    paddleMoveL = paddleHelper(ballMove, False)
+    paddleMoveR = paddleHelper(ballMove, True)
     return  winState if len(S[2])==0 else \
             initialState() if clickReset(I) else \
             deadState if deadthCollide(S[0]) else \
-            paddleHelper(ballMoveState, 1) if equalList(keys, "d") else \
-            paddleHelper(ballMoveState, 0) if equalList(keys, "a")  else \
-            ballMoveState 
+            paddleMoveR if equalList(keys, "d") else \
+            paddleMoveL if equalList(keys, "a")  else \
+            ballMove 
 
 def clickReset(I):
     click = I[0]
@@ -307,14 +309,28 @@ def pCollide(B,brick):
         "n"
 
 def vCollision(B,L):
-    box=ballBox(B)
-    return ((box[0][1] >= L[3][1] and box[3][1] < L[3][1]) or (box[3][1] <= L[0][1] and box[0][1] > L[0][1])) \
-            and between(L[2][0], L[1][0], range(box[2][0],box[1][0]))
+    box = ballBox(B)
+    bTop = box[0][1]
+    bBot = box[3][1]
+    bLeft = box[2][0]
+    bRight = box[1][0]
+    rTop = L[0][1]
+    rBot = L[3][1]
+    rLeft = L[2][0]
+    rRight = L[1][0]
+    return ((bTop >= rBot and bBot < rBot) or (bBot <= rTop and bTop > rTop)) and (between(rLeft, rRight, range(bLeft,bRight)))
 
 def hCollision(B,L):
-    box=ballBox(B)
-    return ((box[1][0] >= L[2][0] and box[3][1] < L[3][1]) or (box[2][0] <= L[1][0] and box[1][0] > L[1][0])) \
-            and between(L[3][1], L[0][1], range(box[3][1],box[0][1]))
+    box = ballBox(B)
+    bTop = box[0][1]
+    bBot = box[3][1]
+    bLeft = box[2][0]
+    bRight = box[1][0]
+    rTop = L[0][1]
+    rBot = L[3][1]
+    rLeft = L[2][0]
+    rRight = L[1][0]
+    return ((bRight >= rLeft and bLeft < rLeft) or (bLeft <= rRight and bRight > rRight)) and between(rBot, rTop, range(bBot,bTop))
 def cornerCollision(B,L):
     return vCollision(B,L) and hCollision(B,L)
 def between(bot,top,vals):
@@ -333,8 +349,6 @@ def motionHelper(S):
     if not deadBricks==None:
         S[2].remove(deadBricks)
     return buildState(ballMove(nextBall(S)), S[1], S[2], S[3], S[4], S[5],S[6],S[7]+1)
-
-    #return buildState(ballMove(nextBall(S)),S[1],S[2],S[3],S[4],S[5],S[6],S[7])
 
 def sHelper(S):
     return S
@@ -373,12 +387,12 @@ def sImg(dust):
 
 
 '''
-  staticImgs.union(ballImg(S[1]))padImg(S[2]) U brImg(S[3]) U sImg(S[6]) if S[4]=0 & S[5]=0;
+  staticImgs.union(ballImg(S[1]))padImg(S[2]) U brImg(S[3]) U sImg(S[6]) if S[4]=0 & S[5]=0
 
-brImg(B):=Union[br in B] boxImg(br,dOrange)
-ballImg(b):={disc(p,r,c)} where p=b[1] & r=b[2] & c= dViolet
-padImg(pad):=boxImg(pad,dBlue)
-sImg(dust):= {} if |dust|=0;
+brImg(B)=Union[br in B] boxImg(br,dOrange)
+ballImg(b)={disc(p,r,c)} where p=b[1] & r=b[2] & c= dViolet
+padImg(pad)=boxImg(pad,dBlue)
+sImg(dust)= {} if |dust|=0
 disc(dust[3],dust[4],dRed) otherwise
 '''
 #================================================================================================
