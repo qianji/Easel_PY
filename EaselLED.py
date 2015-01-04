@@ -191,7 +191,6 @@ def drawImages(screen,images):
     #print(images)
     for x in images:
         #draw segment
-        #print(x)
         if isSegment(x): drawSegment(screen,x)
         # draw circle
         elif isCircle(x): drawCircle(screen,x)

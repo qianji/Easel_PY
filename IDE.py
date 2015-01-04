@@ -171,8 +171,7 @@ ballDead = ball(point(700, 200), 7, 0, 0)
 paddleStart = paddle(pTL, pTR, pBL, pBR)
 
 def brickStart():
-    #return {brick1, brick2, brick3, brick4, brick5, brick6, brick7, brick8, brick9, brick10, brick11, brick12, brick13, brick14, brick15, brick5t, brick15t, brick10t}
-    return {brick2}
+    return [brick1, brick2, brick3, brick4, brick5, brick6, brick7, brick8, brick9, brick10, brick11, brick12, brick13, brick14, brick15, brick5t, brick15t, brick10t]
 topBorder = segment(boardTL, boardTR, dBlack)
 leftBorder = segment(boardTL, boardBL, dBlack)
 rightBorder = segment(boardTR, boardBR, dBlack)
@@ -183,7 +182,7 @@ rlBorder = segment(resetTL, resetBL, dGreen)
 rrBorder = segment(resetTR, resetBR, dGreen)
 rbBorder = segment(resetBL, resetBR, dGreen)
 
-staticImgs = {reset, topBorder, leftBorder, rightBorder, botBorder, rtBorder, rlBorder, rrBorder, rbBorder}
+staticImgs = [reset, topBorder, leftBorder, rightBorder, botBorder, rtBorder, rlBorder, rrBorder, rbBorder]
 
 deadState = buildState(ballDead, paddleStart, brickStart(), False, True, [], [], 0)
 winState = buildState(ballDead, paddleStart, [], True, False, [], [], 0)
@@ -343,15 +342,15 @@ def sHelper(S):
 def sClean(S):
     return (S[0],S[1],S[2],S[3],S[4],S[5],S[6],S[7]+1)
 def images(S):
-    return set.union(staticImgs,ballImg(S[0]),padImg(S[1]),brImg(S[2])) if not S[4] and not S[3] else \
-            set.union(staticImgs,{text("You win",point(715,400),65,dBlue)}) if S[3] else \
-            set.union(staticImgs,{text("You died",point(715,400),65,dRed)})
+    return staticImgs + ballImg(S[0]) +padImg(S[1]) + brImg(S[2]) if not S[4] and not S[3] else \
+            staticImgs + [text("You win",point(715,400),65,dBlue)]  if S[3] else \
+            staticImgs + [text("You died",point(715,400),65,dRed)]
 
 def ballImg(b):
     p=b[0]
     r=b[1]
     c=dViolet
-    return {disc(p,r,c)}
+    return [disc(p,r,c)]
 
 def padImg(pad):
     return boxImg(pad,dBlue)
@@ -361,16 +360,16 @@ def boxImg(L,c):
     TR=L[1]
     BL=L[2]
     BR=L[3]
-    return {fTri(TL, BR, BL, c), fTri(TL, TR, BR, c),segment(TL,TR,dBlack),segment(TL, BL, dBlue), segment(BL, BR, dRed), segment(TR, BR, dViolet)}
+    return [fTri(TL, BR, BL, c), fTri(TL, TR, BR, c),segment(TL,TR,dBlack),segment(TL, BL, dBlack), segment(BL, BR, dBlack), segment(TR, BR, dBlack)]
+
 def brImg(B):
-    a = set()
+    bricks = []
     for br in B:
-        a= set.union(a,boxImg(br,dOrange))
-    for i in a:
-        print(i)
-    return a
+        bricks = bricks+ boxImg(br,dOrange)
+    return bricks
+
 def sImg(dust):
-    return set() if len(dust)==0 else disc(dust[2],dust[3],dRed)
+    return [] if len(dust)==0 else disc(dust[2],dust[3],dRed)
 
 
 '''
@@ -394,13 +393,11 @@ from pygame.compat import geterror
 def play():
     # Initialize the game engine
     pygame.init()
-
     # Set the height and width of the screen
     size = [1000, 800]
     global screen, S
     screen = pygame.display.set_mode(size)
     pygame.display.set_caption("My Game")
-
     try:
         # initialize the initial state in LED program memory
         # set the global variable state named "GAMMA" in LED memory
@@ -440,12 +437,7 @@ def play():
         S= transition(I,S)
         imgs = images(S)
         drawImages(screen,imgs)
-        #if ~drawSreeen(screen,inputAST):
-        #    return
-        # Go ahead and update the screen with what we've drawn.
-        # This MUST happen after all the other drawing commands.
         pygame.display.flip()
-
 # Be IDLE friendly
     pygame.quit()
 
