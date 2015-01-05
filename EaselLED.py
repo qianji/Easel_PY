@@ -54,20 +54,19 @@ WHITE = (255, 255, 255)
 BLUE =  (  0,   0, 255)
 GREEN = (  0, 255,   0)
 RED =   (255,   0,   0)
-# displaySize() is the size of the display window, (width, height)
-
-def displaySize() : return (1000,800)
+# ScreenSize is the ScreenSize of the display window, (width, height)
 
 def isPoint(I):
     '''image -> bool
     '''
     # extact the tuple from the LED point
+    W,H=ScreenSize
     if isinstance(I,tuple):
         point = I
         if len(point)==2:
             x=point[0]
             y=point[1]
-            return x in range(0,1001) and y in range(0,801)
+            return x in range(-W//2,W//2+1) and y in range(-H//2,H//2+1)
     return False
 
 def isColor(I):
@@ -136,9 +135,9 @@ def isClick(C):
 
 def drawSegment(screen,L):
     tup,(x1,y1),(x2,y2),color=L
-    W,H=displaySize()
-    p1 = [x1,H-y1]
-    p2 = [x2,H-y2]
+    W,H=ScreenSize
+    p1 = [x1+W/2,H/2-y1]
+    p2 = [x2+W/2,H/2-y2]
     pygame.draw.line(screen, tuple(color), p1,p2, 2)
 
 def drawCircle(screen,C):
@@ -152,20 +151,21 @@ def drawDisc(screen,C):
     tup,(x,y),radius,color= C
     x=int(x)
     y=int(y)
-    W,H=displaySize()
-    center = [x,H-y]
+    W,H=ScreenSize
+    center = [x+W/2,H/2-y]
     pygame.draw.circle(screen, tuple(color), center, radius,0)
 
 def drawText(screen,Text):
-    (tup,string,center,fontSize,color) = Text
+    (tup,string,center,fontScreenSize,color) = Text
     [x,y]= center
     # (0,0) is left botton
-    W,H=displaySize()    
-    y=H-int(y)
+    W,H=ScreenSize    
+    y=H/2-int(y)
+    x=W/2+x
     #string = prettyString(string)
     T = string
     if pygame.font:
-        font = pygame.font.Font(None, fontSize)
+        font = pygame.font.Font(None, fontScreenSize)
         text = font.render(T, 1, color)
         textpos = text.get_rect(centerx=int(x),centery=int(y))
         #screen.blit(text, [x,y])
@@ -173,13 +173,13 @@ def drawText(screen,Text):
 
 def drawTriangle(screen,Tri):
     tup,p,q,r,color= Tri
-    W,H=displaySize()
-    p=(p[0],H-p[1])
-    q=(q[0],H-q[1])
-    r=(r[0],H-r[1])
+    W,H=ScreenSize
+    p=(p[0]+W/2,H/2-p[1])
+    q=(q[0]+W/2,H/2-q[1])
+    r=(r[0]+W/2,H/2-r[1])
     pygame.draw.polygon(screen, tuple(color), [p,q,r], 0)
 
-def drawImages(screen,images):
+def drawImages(screen,images,s):
 
     # Define the colors we will use in RGB format
 
@@ -187,11 +187,14 @@ def drawImages(screen,images):
     # inside the main while done==False loop.
      
     # Clear the screen and set the screen background
+    global ScreenSize
+    ScreenSize = s
     screen.fill(WHITE)
     #print(images)
     for x in images:
         #draw segment
-        if isSegment(x): drawSegment(screen,x)
+        if isSegment(x): 
+            drawSegment(screen,x)
         # draw circle
         elif isCircle(x): drawCircle(screen,x)
         elif isDisc(x): drawDisc(screen,x)
