@@ -41,133 +41,133 @@ dBlue = color(0, 0, 255)
 dIndigo = color(70, 0, 130)
 dViolet = color(148, 0, 211)
 
-boardTL = point(400, 800)
-boardTR = point(1000, 800)
-boardBL = point(400, 0)
-boardBR = point(1000, 0)
-reset = text("RESET GAME", point(100,750), 25, dGreen)
+boardTL = point(-100, 400)
+boardTR = point(500, 400)
+boardBL = point(-100, -400)
+boardBR = point(500, -400)
+reset = text("RESET GAME", point(-400,350), 25, dGreen)
 
-pTL = point(655, 100)
-pTR = point(745, 100)
-pBL = point(655, 95)
-pBR = point(745, 95)
+pTL = point(155, -300)
+pTR = point(245, -300)
+pBL = point(155, -305)
+pBR = point(245, -305)
 
-resetTL = point(0, 800)
-resetTR = point(200, 800)
-resetBL = point(0, 700)
-resetBR = point(200, 700)
+resetTL = point(-500, 400)
+resetTR = point(-300, 400)
+resetBL = point(-500, 300)
+resetBR = point(-300, 300)
 
-brick1TL = point(401, 800)
-brick1TR = point(499, 800)
-brick1BL = point(400, 750)
-brick1BR = point(499, 750)
+brick1TL = point(-99, 400)
+brick1TR = point(-1, 400)
+brick1BL = point(-100, 350)
+brick1BR = point(-1, 350)
 brick1 = brick(brick1TL, brick1TR, brick1BL, brick1BR)
 
-brick2TL = point(501, 800)
-brick2TR = point(599, 800)
-brick2BL = point(501, 750)
-brick2BR = point(599, 750)
+brick2TL = point(1, 400)
+brick2TR = point(99, 400)
+brick2BL = point(1, 350)
+brick2BR = point(99, 350)
 brick2 = brick(brick2TL, brick2TR, brick2BL, brick2BR)
 
-brick3TL = point(601, 800)
-brick3TR = point(699, 800)
-brick3BL = point(601, 750)
-brick3BR = point(699, 750)
+brick3TL = point(101, 400)
+brick3TR = point(199, 400)
+brick3BL = point(101, 350)
+brick3BR = point(199, 350)
 brick3 = brick(brick3TL, brick3TR, brick3BL, brick3BR)
 
-brick4TL = point(701, 800)
-brick4TR = point(799, 800)
-brick4BL = point(701, 750)
-brick4BR = point(799, 750)
+brick4TL = point(201, 400)
+brick4TR = point(299, 400)
+brick4BL = point(201, 350)
+brick4BR = point(299, 350)
 brick4 = brick(brick4TL, brick4TR, brick4BL, brick4BR)
 
-brick5TL = point(801, 800)
-brick5TR = point(899, 800)
-brick5BL = point(801, 750)
-brick5BR = point(899, 750)
+brick5TL = point(301, 400)
+brick5TR = point(399, 400)
+brick5BL = point(301, 350)
+brick5BR = point(399, 350)
 brick5 = brick(brick5TL, brick5TR, brick5BL, brick5BR)
 
-brick5tTL = point(901, 800)
-brick5tTR = point(999, 800)
-brick5tBL = point(901, 750)
-brick5tBR = point(999, 750)
+brick5tTL = point(401, 400)
+brick5tTR = point(499, 400)
+brick5tBL = point(401, 350)
+brick5tBR = point(499, 350)
 brick5t = brick(brick5tTL, brick5tTR, brick5tBL, brick5tBR)
 
-brick6TL = point(401, 750)
-brick6TR = point(499, 750)
-brick6BL = point(400, 700)
-brick6BR = point(499, 700)
+brick6TL = point(-99, 350)
+brick6TR = point(-1, 350)
+brick6BL = point(-100, 300)
+brick6BR = point(-1, 300)
 brick6 = brick(brick6TL, brick6TR, brick6BL, brick6BR)
 
-brick7TL = point(501, 750)
-brick7TR = point(599, 750)
-brick7BL = point(501, 700)
-brick7BR = point(599, 700)
+brick7TL = point(1, 350)
+brick7TR = point(99, 350)
+brick7BL = point(1, 300)
+brick7BR = point(99, 300)
 brick7 = brick(brick7TL, brick7TR, brick7BL, brick7BR)
 
-brick8TL = point(601, 750)
-brick8TR = point(699, 750)
-brick8BL = point(601, 700)
-brick8BR = point(699, 700)
+brick8TL = point(101, 350)
+brick8TR = point(199, 350)
+brick8BL = point(101, 300)
+brick8BR = point(199, 300)
 brick8 = brick(brick8TL, brick8TR, brick8BL, brick8BR)
 
-brick9TL = point(701, 750)
-brick9TR = point(799, 750)
-brick9BL = point(701, 700)
-brick9BR = point(799, 700)
+brick9TL = point(201, 350)
+brick9TR = point(299, 350)
+brick9BL = point(201, 300)
+brick9BR = point(299, 300)
 brick9 = brick(brick9TL, brick9TR, brick9BL, brick9BR)
 
-brick10TL = point(801, 750)
-brick10TR = point(899, 750)
-brick10BL = point(801, 700)
-brick10BR = point(899, 700)
+brick10TL = point(301, 350)
+brick10TR = point(399, 350)
+brick10BL = point(301, 300)
+brick10BR = point(399, 300)
 brick10 = brick(brick10TL, brick10TR, brick10BL, brick10BR)
 
-brick10tTL = point(901, 750)
-brick10tTR = point(999, 750)
-brick10tBL = point(901, 700)
-brick10tBR = point(999, 700)
+brick10tTL = point(401, 350)
+brick10tTR = point(499, 350)
+brick10tBL = point(401, 300)
+brick10tBR = point(499, 300)
 brick10t = brick(brick10tTL, brick10tTR, brick10tBL, brick10tBR)
 
-brick11TL = point(401, 700)
-brick11TR = point(499, 700)
-brick11BL = point(400, 650)
-brick11BR = point(499, 650)
+brick11TL = point(-99, 300)
+brick11TR = point(-1, 300)
+brick11BL = point(-100, 250)
+brick11BR = point(-1, 250)
 brick11 = brick(brick11TL, brick11TR, brick11BL, brick11BR)
 
-brick12TL = point(501, 700)
-brick12TR = point(599, 700)
-brick12BL = point(501, 650)
-brick12BR = point(599, 650)
+brick12TL = point(1, 300)
+brick12TR = point(99, 300)
+brick12BL = point(1, 250)
+brick12BR = point(99, 250)
 brick12 = brick(brick12TL, brick12TR, brick12BL, brick12BR)
 
-brick13TL = point(601, 700)
-brick13TR = point(699, 700)
-brick13BL = point(601, 650)
-brick13BR = point(699, 650)
+brick13TL = point(101, 300)
+brick13TR = point(199, 300)
+brick13BL = point(101, 250)
+brick13BR = point(199, 250)
 brick13 = brick(brick13TL, brick13TR, brick13BL, brick13BR)
 
-brick14TL = point(701, 700)
-brick14TR = point(799, 700)
-brick14BL = point(701, 650)
-brick14BR = point(799, 650)
+brick14TL = point(201, 300)
+brick14TR = point(299, 300)
+brick14BL = point(201, 250)
+brick14BR = point(299, 250)
 brick14 = brick(brick14TL, brick14TR, brick14BL, brick14BR)
 
-brick15TL = point(801, 700)
-brick15TR = point(899, 700)
-brick15BL = point(801, 650)
-brick15BR = point(899, 650)
+brick15TL = point(301, 300)
+brick15TR = point(399, 300)
+brick15BL = point(301, 250)
+brick15BR = point(399, 250)
 brick15 = brick(brick15TL, brick15TR, brick15BL, brick15BR)
 
-brick15tTL = point(901, 700)
-brick15tTR = point(999, 700)
-brick15tBL = point(901, 650)
-brick15tBR = point(999, 650)
+brick15tTL = point(401, 300)
+brick15tTR = point(499, 300)
+brick15tBL = point(401, 250)
+brick15tBR = point(499, 250)
 brick15t = brick(brick15tTL, brick15tTR, brick15tBL, brick15tBR)
 
 originPoint = point(-1000,-800)
-ballStart = ball(point(700, 200), 7, 14, 12)
-ballDead = ball(point(700, 200), 7, 0, 0)
+ballStart = ball(point(200, -200), 7, 14, 12)
+ballDead = ball(point(200, -200), 7, 0, 0)
 paddleStart = paddle(pTL, pTR, pBL, pBR)
 
 def brickStart():
@@ -191,7 +191,8 @@ def initialState():
     return buildState(ballStart, paddleStart, brickStart(),0,0,[],[],0)
 
 def displaySize():
-    return (2000,1600)
+    #return (2000,1600)
+    return(1000,800)
 def transition(I,S):
     keys=I[1]
     ballMove= sClean(sHelper(motionHelper(S)))
@@ -206,7 +207,7 @@ def transition(I,S):
 
 def clickReset(I):
     click = I[0]
-    return not click==None and inBox(click,point(0,800),point(200,800),point(0,700),point(200,700))
+    return not click==None and inBox(click,point(-500,400),point(-300,400),point(-500,300),point(-300,300))
 
 def inBox(click,topL,topR,botL,botR):
     x=click[0]
@@ -239,9 +240,9 @@ def nextPX(p,flag,l,r):
     p[0]
 
 def outOfBoundsL(p):
-    return p[0]<=400
+    return p[0]<=-100
 def outOfBoundsR(p):
-    return p[0] >=1000
+    return p[0] >=500
 
 def ballMove(B):
     return ball(nextCenter(B[0],B[2],B[3]),B[1],B[2],B[3])
@@ -272,18 +273,18 @@ def xFlip(B):
 def vWallCollide(B):
     box=ballBox(B)
     nBox=ballBox(B)
-    return (box[0][0] <= 400) or (box[1][0] >= 1000) or \
-		(nBox[0][0] < 400) or (nBox[1][0] > 1000)
+    return (box[0][0] <= -100) or (box[1][0] >= 500) or \
+		(nBox[0][0] <= -100) or (nBox[1][0] >= 500)
 def hWallCollide(B):
     box=ballBox(B) 
     nBox=ballBox(B)
-    return (box[2][1] <= 0) or (box[1][1] >= 800) or \
-		(nBox[2][1] < 0) or (nBox[1][1] > 800)
+    return (box[2][1] <= -400) or (box[1][1] >= 400) or \
+		(nBox[2][1] <= -400) or (nBox[1][1] >= 400)
 
 def deadthCollide(B):
     box=ballBox(B)
     nBox=ballBox(ballMove(B))
-    return box[2][1]<=0 or nBox[2][1]<=0
+    return box[2][1]<=-400 or nBox[2][1]<=-400
 
 def brickBool(B,bricks):
     collitions = bricksCollitions(B,bricks)
@@ -359,8 +360,8 @@ def sClean(S):
     return (S[0],S[1],S[2],S[3],S[4],S[5],S[6],S[7]+1)
 def images(S):
     return staticImgs + ballImg(S[0]) +padImg(S[1]) + brImg(S[2]) if not S[4] and not S[3] else \
-            staticImgs + [text("You win",point(715,400),65,dBlue)]  if S[3] else \
-            staticImgs + [text("You died",point(715,400),65,dRed)]
+            staticImgs + [text("You win",point(215,0),65,dBlue)]  if S[3] else \
+            staticImgs + [text("You died",point(215,0),65,dRed)]
 
 def ballImg(b):
     p=b[0]
