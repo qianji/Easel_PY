@@ -190,6 +190,8 @@ winState = buildState(ballDead, paddleStart, [], True, False, [], [], 0)
 def initialState():
     return buildState(ballStart, paddleStart, brickStart(),0,0,[],[],0)
 
+def displaySize():
+    return (2000,1600)
 def transition(I,S):
     keys=I[1]
     ballMove= sClean(sHelper(motionHelper(S)))
@@ -407,21 +409,25 @@ from pygame.compat import geterror
 def play():
     # Initialize the game engine
     pygame.init()
+    global Screen, State, Size
     # Set the height and width of the screen
-    size = [1000, 800]
-    global screen, S
-    screen = pygame.display.set_mode(size)
+    try:
+        Size = displaySize()
+    except:
+        print("displaySize is not defined in your program")
+        return
+    Screen = pygame.display.set_mode(Size)
     pygame.display.set_caption("My Game")
     try:
         # initialize the initial state in LED program memory
         # set the global variable state named "GAMMA" in LED memory
-        S = initialState()
+        State = initialState()
     except :
         print("initialState is not defined in your program")
         return
-    imgs = images(S)
+    imgs = images(State)
     # draw the initial images before play
-    drawImages(screen,imgs)
+    drawImages(Screen,imgs,Size)
     done = False
     clock = pygame.time.Clock()
     while not done:
@@ -445,12 +451,13 @@ def play():
             elif event.type == MOUSEBUTTONDOWN:
                 click = pygame.mouse.get_pos()
                 # update click in Program
-                click = (click[0],size[1]-click[1])
+                click = (click[0]-Size[0]/2,Size[1]/2-click[1])
+                #print(click)
         #print(keys)
         I = (click,keys)
-        S= transition(I,S)
-        imgs = images(S)
-        drawImages(screen,imgs)
+        State= transition(I,State)
+        imgs = images(State)
+        drawImages(Screen,imgs,Size)
         pygame.display.flip()
 # Be IDLE friendly
     pygame.quit()

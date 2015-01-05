@@ -66,14 +66,14 @@ def isPoint(I):
         if len(point)==2:
             x=point[0]
             y=point[1]
-            return x in range(-W//2,W//2+1) and y in range(-H//2,H//2+1)
+            return x >= -W/2 and x<=W/2 and y>=-H/2 and y<=H/2
     return False
 
 def isColor(I):
     if isinstance(I,tuple):
         color = I
         if len(color)==3:
-            return all(c in range(0,256) for c in color)
+            return all(0<=c and c<=256 for c in color)
     return False
 
 def isSegment(I):
@@ -102,7 +102,7 @@ def slope(p,q):
         (px,py)=p
         (qx,qy)=q
         if not px-qx==0:
-            return (py-qy)/(px-qx)
+            return float(py-qy)/float(px-qx)
         else:
             return None
 
@@ -144,7 +144,8 @@ def drawCircle(screen,C):
     tup,(x,y),radius,color= C
     x=int(x)
     y=int(y)
-    center = [x,H-y]
+    W,H=ScreenSize
+    center = [x+W//2,H//2-y]
     pygame.draw.circle(screen, tuple(color), center, radius,1)
 
 def drawDisc(screen,C):
@@ -152,7 +153,7 @@ def drawDisc(screen,C):
     x=int(x)
     y=int(y)
     W,H=ScreenSize
-    center = [x+W/2,H/2-y]
+    center = [x+W//2,H//2-y]
     pygame.draw.circle(screen, tuple(color), center, radius,0)
 
 def drawText(screen,Text):
@@ -160,7 +161,7 @@ def drawText(screen,Text):
     [x,y]= center
     # (0,0) is left botton
     W,H=ScreenSize    
-    y=H/2-int(y)
+    y=H/2-y
     x=W/2+x
     #string = prettyString(string)
     T = string
