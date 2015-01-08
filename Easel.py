@@ -46,4 +46,4 @@ def main(G):
 def play(game):
     G = __import__(game)
     main(G)
-play("TTT")
+play("boxClick")
