@@ -24,10 +24,10 @@ def segment(x1,y1,x2,y2):
     c=(0,0,0)
     return ("seg",p,r,c)
 
-def update(I):
+def update(IN):
     global S
-    p = I[0]
-    if p==None: return
+    p = IN.mouseX,IN.mouseY
+    if p[0]==None and p[1]==None: return
     if inLeftBox(p): S=1
     if inRightBox(p): S=2
 
