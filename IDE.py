@@ -435,7 +435,7 @@ def play():
         # This limits the while loop to a max of 10 times per second.
         # Leave this out and we will use all CPU we can.
         # 60 frame per second
-        clock.tick(10)
+        clock.tick(60)
         click=None
         keyboard = []
         keys=[]
