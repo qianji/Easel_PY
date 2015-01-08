@@ -1,4 +1,4 @@
-from EaselLED import *
+from Drawing import *
 import sys, os, pygame
 from pygame.locals import *
 from pygame.compat import geterror
