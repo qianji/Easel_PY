@@ -1,6 +1,9 @@
+
+
 def init():
     global S
     S=1
+
 def output():
     global S
     return background()+line(S)
@@ -27,20 +30,20 @@ def update(IN):
     if leftBoxClicked(IN): S=1
     if rightBoxClicked(IN): S=2
 
+
+def mouseClicked(IN): 
+    return IN.mouseDown and not IN.oldMouseDown
+
 def line(S):
     if S==2: return [segment(300,300,400,200)]
     if S==1: return [segment(200,300,300,200)]
 
 def leftBoxClicked(IN):
-    mouseDown =IN.mouseDown
+    click = mouseClicked(IN)
     (x,y) = IN.mouseX, IN.mouseY
-    return mouseDown and x<300 and x>200 and y<300 and y>200
+    return click and x<300 and x>200 and y<300 and y>200
 
 def rightBoxClicked(IN):
-    mouseDown =IN.mouseDown
+    click = mouseClicked(IN)
     (x,y) = IN.mouseX,IN.mouseY
-    return mouseDown and x>300 and x<400 and y<300 and y>200
-
-
-
-
+    return click and x>300 and x<400 and y<300 and y>200
