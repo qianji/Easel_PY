@@ -26,22 +26,22 @@ def segment(x1,y1,x2,y2):
 
 def update(IN):
     global S
-    p = IN.mouseX,IN.mouseY
-    if p[0]==None and p[1]==None: return
-    if inLeftBox(p): S=1
-    if inRightBox(p): S=2
+    if leftBoxClicked(IN): S=1
+    if rightBoxClicked(IN): S=2
 
 def line(S):
     if S==2: return [segment(300,300,400,200)]
     if S==1: return [segment(200,300,300,200)]
 
-def inLeftBox(p):
-    (x,y) = p
-    return x<300 and x>200 and y<300 and y>200
+def leftBoxClicked(IN):
+    mouseDown =IN.mouseDown
+    (x,y) = IN.mouseX, IN.mouseY
+    return mouseDown and x<300 and x>200 and y<300 and y>200
 
-def inRightBox(p):
-    (x,y) = p
-    return x>300 and x<400 and y<300 and y>200
+def rightBoxClicked(IN):
+    mouseDown =IN.mouseDown
+    (x,y) = IN.mouseX,IN.mouseY
+    return mouseDown and x>300 and x<400 and y<300 and y>200
 
 
 

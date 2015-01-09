@@ -6,10 +6,7 @@ class UserInput:
     ''' this is a class for user input 
     '''
     def __init__(self,L):
-        if L[0]==None:
-            (self.mouseX, self.mouseY), self.keysPressed = (None,None),L[1]
-        else:
-            (self.mouseX, self.mouseY), self.keysPressed =L
+        self.mouseX, self.mouseY, self.oldMouseDown, self.mouseDown, self.keysDown,self.keysPressed =L
 
 
 def main(G):
@@ -17,7 +14,6 @@ def main(G):
     pygame.init()
 
     # Initialization of the game
-    global frameRate, windowDimensions    
     frameRate=20
     windowDimensions = (800,600)
     G.init()
@@ -25,8 +21,9 @@ def main(G):
     # set the screen and clock
     Screen = pygame.display.set_mode(windowDimensions)    
     clock = pygame.time.Clock()
-    HALT = False
 
+    mouseDown = False
+    HALT = False
     # the main loop
     while not HALT:
         # draw the images from the output to the screen
@@ -39,9 +36,18 @@ def main(G):
         # 60 frame per second
         clock.tick(frameRate)
         click=None
-        keyboard = []
-        keys=[]
 
+        # set the input variables 
+
+        # get the mouse position
+        mouseX,mouseY = pygame.mouse.get_pos()
+        # make the (0,0) the center of the screen
+        mouseX = mouseX - windowDimensions[0]/2
+        mouseY = windowDimensions[1]/2 -mouseY
+        oldMouseDown = mouseDown
+        mouseDown = False
+        keysDown = False
+        keysPressed = []
         # get user input within one frame
         for event in pygame.event.get(): # User did something
             if event.type == pygame.QUIT: # If user clicked close
@@ -52,14 +58,15 @@ def main(G):
                     done=True
                     sys.exit()
                 else:
-                    keys.append(chr(event.key))
+                    keysDown = True
+                    keysPressed.append(chr(event.key))
             elif event.type == MOUSEBUTTONDOWN:
-                click = pygame.mouse.get_pos()
-                # update click in Program
-                click = (click[0]-windowDimensions[0]/2,windowDimensions[1]/2-click[1])
+                mouseDown = True
         # update the game with user input
-        IN = UserInput([click,keys])
+        IN = UserInput([mouseX,mouseY,oldMouseDown,mouseDown,keysDown,keysPressed])
         G.update(IN)
+    # Be IDLE friendly
+    pygame.quit()
 
 def play(game):
     # import the game file
