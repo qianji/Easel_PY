@@ -21,8 +21,9 @@ def main(G):
     # set the screen and clock
     Screen = pygame.display.set_mode(windowDimensions)    
     clock = pygame.time.Clock()
-
+    #mouseDown is true iff the left mouse button is down
     mouseDown = False
+
     HALT = False
     # the main loop
     while not HALT:
@@ -31,22 +32,28 @@ def main(G):
         drawImages(Screen,images,windowDimensions)
         pygame.display.flip()
 
-        # This limits the while loop to a max of 10 times per second.
+        # This limits the while loop to a max of frameRate times per second.
         # Leave this out and we will use all CPU we can.
-        # 60 frame per second
         clock.tick(frameRate)
-        click=None
 
         # set the input variables 
 
-        # get the mouse position
+        # get the mouse position; mouseX and mouseY are the horizontal and vertical  position of the mouse in the window
         mouseX,mouseY = pygame.mouse.get_pos()
         # make the (0,0) the center of the screen
         mouseX = mouseX - windowDimensions[0]/2
         mouseY = windowDimensions[1]/2 -mouseY
+
+        # oldMouseDown is False in the first frame, and in each subsequent frame is the previous value of mouseDown from the previous frame. It is set to False initially.
         oldMouseDown = mouseDown
-        mouseDown = False
-        keysDown = False
+
+        # mouseDown is true iff the left mouse button is down
+        mouseDown=pygame.mouse.get_pressed()[0]
+
+        # keysDown stores the value of pygame.key.get_pressed()
+        keysDown = pygame.key.get_pressed()
+        
+        #keysPressed is a set of the keys that went from up to down
         keysPressed = []
         # get user input within one frame
         for event in pygame.event.get(): # User did something
@@ -58,10 +65,7 @@ def main(G):
                     done=True
                     sys.exit()
                 else:
-                    keysDown = True
                     keysPressed.append(chr(event.key))
-            elif event.type == MOUSEBUTTONDOWN:
-                mouseDown = True
         # update the game with user input
         IN = UserInput([mouseX,mouseY,oldMouseDown,mouseDown,keysDown,keysPressed])
         G.update(IN)
