@@ -1,15 +1,24 @@
-
-
+def windowDimensions():
+    return (1000,800)
 def init():
     global S
     S=1
 
-def output():
+def display():
     global S
     return background()+line(S)
    
+def sounds(IN):
+    if leftBoxClicked(IN):
+        return ["boing"]
+    if rightBoxClicked(IN):
+        return ["boing","clap"]
+    if mouseClicked(IN):
+        return ["click"]
+    else:
+        return []
 def background():
-    W,H = (800,600)
+    W,H = windowDimensions()
     L1 = segment(200,200,200,300)
     L2 = segment(400,200,400,300)
     L3 = segment(200,300,400,300)
