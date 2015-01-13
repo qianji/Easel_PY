@@ -71,12 +71,10 @@ def main(G):
         # get user input within one frame
         for event in pygame.event.get(): # User did something
             if event.type == pygame.QUIT: # If user clicked close
-                done=True # Flag that we are done so we exit this loop
-                sys.exit()
+                HALT=True # Flag that we are done so we exit this loop
             elif event.type == KEYDOWN:
                 if event.key == pygame.K_ESCAPE:
-                    done=True
-                    sys.exit()
+                    HALT=True
                 else:
                     keysPressed.append(chr(event.key))
 
