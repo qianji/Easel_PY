@@ -184,30 +184,55 @@ rbBorder = segment(resetBL, resetBR, dGreen)
 
 staticImgs = [reset, topBorder, leftBorder, rightBorder, botBorder, rtBorder, rlBorder, rrBorder, rbBorder]
 
+initState = buildState(ballStart, paddleStart, brickStart(),0,0,[],[],0)
 deadState = buildState(ballDead, paddleStart, brickStart(), False, True, [], [], 0)
 winState = buildState(ballDead, paddleStart, [], True, False, [], [], 0)
 
-def initialState():
-    return buildState(ballStart, paddleStart, brickStart(),0,0,[],[],0)
+def init():
+    global S
+    S = buildState(ballStart, paddleStart, brickStart(),0,0,[],[],0)
 
-def displaySize():
-    #return (2000,1600)
+def windowDimensions():
     return(1000,800)
-def transition(I,S):
-    keys=I[1]
+
+def update(IN):
+    global S
+    keys = IN.keysPressed
     ballMove= sClean(sHelper(motionHelper(S)))
     paddleMoveL = paddleHelper(ballMove, False)
     paddleMoveR = paddleHelper(ballMove, True)
-    return  winState if len(S[2])==0 else \
-            initialState() if clickReset(I) else \
+    S = winState if len(S[2])==0 else \
+            initState if clickReset(IN) else \
             deadState if deadthCollide(S[0]) else \
-            paddleMoveR if equalList(keys, "d") else \
-            paddleMoveL if equalList(keys, "a")  else \
+            paddleMoveR if equalList(keys,"d") else \
+            paddleMoveL if equalList(keys,"a") else \
             ballMove 
 
+def sounds(IN):
+    global S
+    if S == deadState:
+        return ["boing"]
+    if S == winState:
+        return ["bang"]
+    if collided():
+        return ["ding"]
+    if brickCollide(S[0],S[1]) in ["b","v","h"]:
+        return ["bang"]
+def collided():
+    global S
+    tempB=S[0]
+    for brick in S[2]:
+        if brickCollide(tempB,brick) in ["b","v","h"]:
+            return True
+    return False
+
+def mouseClick(I):
+    return I.mouseDown and not I.oldMouseDown
+
 def clickReset(I):
-    click = I[0]
-    return not click==None and inBox(click,point(-500,400),point(-300,400),point(-500,300),point(-300,300))
+    clicked = mouseClick(I)
+    click = I.mouseX, I.mouseY
+    return clicked and inBox(click,point(-500,400),point(-300,400),point(-500,300),point(-300,300))
 
 def inBox(click,topL,topR,botL,botR):
     x=click[0]
@@ -358,7 +383,8 @@ def sHelper(S):
 
 def sClean(S):
     return (S[0],S[1],S[2],S[3],S[4],S[5],S[6],S[7]+1)
-def images(S):
+def display():
+    global S
     return staticImgs + ballImg(S[0]) +padImg(S[1]) + brImg(S[2]) if not S[4] and not S[3] else \
             staticImgs + [text("You win",point(215,0),65,dBlue)]  if S[3] else \
             staticImgs + [text("You died",point(215,0),65,dRed)]
@@ -387,80 +413,3 @@ def brImg(B):
 
 def sImg(dust):
     return [] if len(dust)==0 else disc(dust[2],dust[3],dRed)
-
-
-'''
-  staticImgs.union(ballImg(S[1]))padImg(S[2]) U brImg(S[3]) U sImg(S[6]) if S[4]=0 & S[5]=0
-
-brImg(B)=Union[br in B] boxImg(br,dOrange)
-ballImg(b)={disc(p,r,c)} where p=b[1] & r=b[2] & c= dViolet
-padImg(pad)=boxImg(pad,dBlue)
-sImg(dust)= {} if |dust|=0
-disc(dust[3],dust[4],dRed) otherwise
-'''
-#================================================================================================
-# Easel LED game Engine
-#================================================================================================
-from EaselLED import *
-
-import sys, os, pygame
-from pygame.locals import *
-from pygame.compat import geterror
-
-def play():
-    # Initialize the game engine
-    pygame.init()
-    global Screen, State, Size
-    # Set the height and width of the screen
-    try:
-        Size = displaySize()
-    except:
-        print("displaySize is not defined in your program")
-        return
-    Screen = pygame.display.set_mode(Size)
-    pygame.display.set_caption("My Game")
-    try:
-        # initialize the initial state in LED program memory
-        # set the global variable state named "GAMMA" in LED memory
-        State = initialState()
-    except :
-        print("initialState is not defined in your program")
-        return
-    imgs = images(State)
-    # draw the initial images before play
-    drawImages(Screen,imgs,Size)
-    done = False
-    clock = pygame.time.Clock()
-    while not done:
-        # This limits the while loop to a max of 10 times per second.
-        # Leave this out and we will use all CPU we can.
-        # 60 frame per second
-        clock.tick(60)
-        click=None
-        keyboard = []
-        keys=[]
-        for event in pygame.event.get(): # User did something
-            if event.type == pygame.QUIT: # If user clicked close
-                done=True # Flag that we are done so we exit this loop
-                sys.exit()
-            elif event.type == KEYDOWN:
-                if event.key == pygame.K_ESCAPE:
-                    done=True
-                    sys.exit()
-                else:
-                    keys.append(chr(event.key))
-            elif event.type == MOUSEBUTTONDOWN:
-                click = pygame.mouse.get_pos()
-                # update click in Program
-                click = (click[0]-Size[0]/2,Size[1]/2-click[1])
-                #print(click)
-        #print(keys)
-        I = (click,keys)
-        State= transition(I,State)
-        imgs = images(State)
-        drawImages(Screen,imgs,Size)
-        pygame.display.flip()
-# Be IDLE friendly
-    pygame.quit()
-
-play()

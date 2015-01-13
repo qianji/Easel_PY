@@ -79,13 +79,14 @@ def main(G):
                     sys.exit()
                 else:
                     keysPressed.append(chr(event.key))
+
         # update the game with user input
         IN = UserInput([mouseX,mouseY,oldMouseDown,mouseDown,oldKeysDown,keysDown,keysPressed])
-        if "update" in dir(G):
-            G.update(IN)
         # if sounds() is defined, play the sounds in the list returned by sounds()
         if "sounds" in dir(G):
             playSounds(G.sounds(IN))
+        if "update" in dir(G):
+            G.update(IN)
     # Be IDLE friendly
     pygame.quit()
 
@@ -95,3 +96,4 @@ def play(game):
     # call the game engine to play the game using the functions defined in the game file
     main(G)
 play("boxClick")
+#play("breakout")
