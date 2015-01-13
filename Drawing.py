@@ -156,15 +156,18 @@ def drawImages(screen,images,s):
         elif isText(x): drawText(screen,x)
         elif isTriangle(x): drawTriangle(screen,x)
 
-    ## Draw a rectangle outline
-    #pygame.draw.rect(screen, BLACK, [75, 10, 50, 20], 2)
-     
-    ## Draw a solid rectangle
-    #pygame.draw.rect(screen, BLACK, [150, 10, 50, 20])
-     
-    ## Draw an ellipse outline, using a rectangle as the outside boundaries
-    #pygame.draw.ellipse(screen, RED, [225, 10, 50, 20], 2) 
+def seg(p,q,c):
+    return ("seg",p,q,c)
 
-    ## Draw an solid ellipse, using a rectangle as the outside boundaries
-    #pygame.draw.ellipse(screen, RED, [300, 10, 50, 20])   
+def circ(p,r,c):
+    return ("circ",p,r,c)
+
+def ftri(p,q,r,c):
+    return ("fTri",p,q,r,c)
+
+def txt(S, p, n, C):
+    return ("txt",S,p,n,C)
+
+def disc(p, r, C):
+    return ("disc",p,r,c)
 

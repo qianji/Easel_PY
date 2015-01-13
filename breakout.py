@@ -3,6 +3,7 @@ Qianji Zheng
 July 2014
 
 '''
+import Drawing
 def point(x,y):
     return (x,y)
 def color(r,g,b):
@@ -197,15 +198,16 @@ def windowDimensions():
 
 def update(IN):
     global S
-    keys = IN.keysPressed
+    keysPressed = IN.keysPressed
+    keysDown = IN.keysDown
     ballMove= sClean(sHelper(motionHelper(S)))
     paddleMoveL = paddleHelper(ballMove, False)
     paddleMoveR = paddleHelper(ballMove, True)
     S = winState if len(S[2])==0 else \
             initState if clickReset(IN) else \
             deadState if deadthCollide(S[0]) else \
-            paddleMoveR if equalList(keys,"d") else \
-            paddleMoveL if equalList(keys,"a") else \
+            paddleMoveR if equalList(keysPressed,"d") else \
+            paddleMoveL if keysDown[pygame.K_a] else \
             ballMove 
 
 def sounds(IN):

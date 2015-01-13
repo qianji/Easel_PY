@@ -1,3 +1,5 @@
+from EaselLib import *
+
 def windowDimensions():
     return (1000,800)
 def init():
@@ -8,13 +10,13 @@ def display():
     global S
     return background()+line(S)
    
-def sounds(IN):
-    if leftBoxClicked(IN):
-        return ["boing"]
-    if rightBoxClicked(IN):
-        return ["boing","clap"]
-    if mouseClicked(IN):
-        return ["click"]
+def sounds():
+    if leftBoxClicked():
+        return [BOING]
+    if rightBoxClicked():
+        return [BOING,CLAP]
+    if mouseClicked():
+        return [CLICK]
     else:
         return []
 def background():
@@ -32,27 +34,33 @@ def segment(x1,y1,x2,y2):
     p=(x1,y1)
     r=(x2,y2)
     c=(0,0,0)
-    return ("seg",p,r,c)
+    return seg(p,r,c)
 
-def update(IN):
+def update():
     global S
-    if leftBoxClicked(IN): S=1
-    if rightBoxClicked(IN): S=2
+    if leftBoxClicked(): S=1
+    if rightBoxClicked(): S=2
 
 
-def mouseClicked(IN): 
-    return IN.mouseDown and not IN.oldMouseDown
+def mouseClicked(): 
+    global mouseDown
+    global oldMouseDown
+    return mouseDown and not oldMouseDown
 
 def line(S):
     if S==2: return [segment(300,300,400,200)]
     if S==1: return [segment(200,300,300,200)]
 
-def leftBoxClicked(IN):
-    click = mouseClicked(IN)
-    (x,y) = IN.mouseX, IN.mouseY
+def leftBoxClicked():
+    global mouseX
+    global mouseY
+    click = mouseClicked()
+    (x,y) = mouseX,mouseY
     return click and x<300 and x>200 and y<300 and y>200
 
-def rightBoxClicked(IN):
-    click = mouseClicked(IN)
-    (x,y) = IN.mouseX,IN.mouseY
+def rightBoxClicked():
+    global mouseX
+    global mouseY
+    click = mouseClicked()
+    (x,y) = mouseX,mouseY
     return click and x>300 and x<400 and y<300 and y>200

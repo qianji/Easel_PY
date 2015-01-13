@@ -1,14 +1,7 @@
-from Drawing import *
 import sys, os, pygame
 from pygame.locals import *
 from pygame.compat import geterror
-from Sounds import *
-class UserInput:
-    ''' this is a class for user input 
-    '''
-    def __init__(self,L):
-        self.mouseX, self.mouseY, self.oldMouseDown, self.mouseDown,self.oldKeysDown,self.keysDown,self.keysPressed =L
-
+from EaselLib import *
 def main(G):
     # Initialize the game engine
     pygame.init()
@@ -31,6 +24,9 @@ def main(G):
     # set the screen and clock
     Screen = pygame.display.set_mode(WD)    
     clock = pygame.time.Clock()
+
+    # define the global constants
+    global mouseDown, mouseX, mouseY, keysDown, oldKeysDown,oldMouseDown, keysPressed
     #mouseDown is true iff the left mouse button is down
     mouseDown = False
     keysDown = []
@@ -65,7 +61,8 @@ def main(G):
 
         # keysDown stores the value of pygame.key.get_pressed()
         keysDown = pygame.key.get_pressed()
-        
+
+        pygame.key.set_repeat (500, 30)
         #keysPressed is a set of the keys that went from up to down
         keysPressed = []
         # get user input within one frame
@@ -79,12 +76,12 @@ def main(G):
                     keysPressed.append(chr(event.key))
 
         # update the game with user input
-        IN = UserInput([mouseX,mouseY,oldMouseDown,mouseDown,oldKeysDown,keysDown,keysPressed])
+        #IN = UserInput([mouseX,mouseY,oldMouseDown,mouseDown,oldKeysDown,keysDown,keysPressed])
         # if sounds() is defined, play the sounds in the list returned by sounds()
         if "sounds" in dir(G):
-            playSounds(G.sounds(IN))
+            playSounds(G.sounds())
         if "update" in dir(G):
-            G.update(IN)
+            G.update()
     # Be IDLE friendly
     pygame.quit()
 
