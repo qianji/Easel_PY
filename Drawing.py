@@ -1,59 +1,12 @@
 ############################################################################
-# Easel_LED
+# Easel_Python
 # 
-# by Nelson Rushton,
+# by Qianji Zheng
 # Texas Tech Dept. of Computer Science
-# July 16, 2014
+# January 3, 2015
 
 import pygame
 
-"""
-
-This engine will operate game programs written in LED. To play a game,
-
-  0. Download and install pygame using the link http://www.pygame.org/download.shtml
-  1. Copy the LED game program into a folder, together with this
-     engine, and the LED interpreter files.
-  2. Run this program from IDLE.
-  3. At the IDLE prompt enter the command play(<file>), where <file> is
-     a string which is the name of the game program, without the .led file
-     extension.
-
-The LED game program must define *initialState*, *images*, *sounds* and
-*transition*, as follows:
-
-    a) initialState -- represents the starting state of the program
-    b) transition: Input * State -> State -- transition(I,S) is the state resulting from the program accepting input I in state S.
-    c) images: State ~> Sprite -- images(S) is a set of the images to be displayed in the program window when the program is in state S.
-    d) sounds: Input * State ~> Set(Sound) -- sounds(I,S) is the set of sounds played when input I is accepted in state S.
-
-Function bodies in an LED game program may use the constant symbols
-*Gamma* and *click*, denoting the current game state and most recent
-mouse click, respectively. The valuses of *initState* and *transition*  may be
-any arbitrary LED objects. The value of *images* must be a screen
-display, as defined below.
-      
-      
-    *) A point is a pair (x,y) where 0 ≤  x ≤  1000 and 0 ≤ y ≤ 800
-    *) A color is a triple (R,G,B) where 0 ≤ R,G,B ≤ 255
-    *) An image is  a segment, circle, filled triangle, text image, or disc
-        *) A segment is a four-tuple (`seg, p,q,C) where p and q are points, interpreted as the endpoints of the segment, and C is a color. 
-        *) A circle is a four-tuple (`circ, p, r, C)  where p is a point, r is a positive integer, and C is a color. We interpret p and r as the center and radius of the circle, respectively.
-        *) A filled triangle is a 5-tuple (`fTri, p, q, r, C) where p, q, and r are points and C is a color. The 5-tuple  (`fTri, p, q, r, C), where p, q, and r are noncollinear points and C is a color, represents the filled triangle with vertices p, q, and r, of color C. 
-        *) A text image is  a 5-tuple (`txt, S, p, n, C) where S is a string, p a point, n integer in [4,100], and C is a color. The text image  (`txt, S, p, n, C)  represents the text string S, displayed with height n centered at p with  color C.
-        *) Disc -- a four-tuple (`disc, p, r, C)   where p is a point, r is a positive integer, and C is a color. We interpret p and r as the center and radius of the circle, respectively.
-    *) A sprite is a set of images
-    *) A click is either a point or the atom `nil. 
-    *) An input  is a pair (c,K) where c is a click and K is a set of single-character strings
-    *) A sound  is one of the following five atoms: `ding, `bang, `boing, `clap, `click
-    *) The game runs in a 600 by 500 window, with (0,0) as the lower left corner.
-
-"""
-BLACK = (  0,   0,   0)
-WHITE = (255, 255, 255)
-BLUE =  (  0,   0, 255)
-GREEN = (  0, 255,   0)
-RED =   (255,   0,   0)
 # ScreenSize is the ScreenSize of the display window, (width, height)
 
 def isPoint(I):
@@ -190,6 +143,7 @@ def drawImages(screen,images,s):
     # Clear the screen and set the screen background
     global ScreenSize
     ScreenSize = s
+    WHITE = (255,255,255)
     screen.fill(WHITE)
     #print(images)
     for x in images:
