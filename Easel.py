@@ -25,11 +25,9 @@ def main(G):
     Screen = pygame.display.set_mode(WD)    
     clock = pygame.time.Clock()
 
-    # define the global constants
-    global mouseDown, mouseX, mouseY, keysDown, oldKeysDown,oldMouseDown, keysPressed
     #mouseDown is true iff the left mouse button is down
-    mouseDown = False
-    keysDown = []
+    G.mouseDown = False
+    G.keysDown = []
     HALT = False
     # the main loop
     while not HALT:
@@ -46,25 +44,24 @@ def main(G):
         # set the input variables 
 
         # get the mouse position; mouseX and mouseY are the horizontal and vertical  position of the mouse in the window
-        mouseX,mouseY = pygame.mouse.get_pos()
+        G.mouseX,G.mouseY = pygame.mouse.get_pos()
         # make the (0,0) the center of the screen
-        mouseX = mouseX - WD[0]/2
-        mouseY = WD[1]/2 -mouseY
+        G.mouseX = G.mouseX - WD[0]/2
+        G.mouseY = WD[1]/2 -G.mouseY
 
         # oldMouseDown is False in the first frame, and in each subsequent frame is the previous value of mouseDown from the previous frame. It is set to False initially.
-        oldMouseDown = mouseDown
+        G.oldMouseDown = G.mouseDown
 
         # oldKeysDown  is a set of the keys that were down in the previous frame. It begins as empty.
-        oldKeysDown = keysDown
+        G.oldKeysDown = G.keysDown
         # mouseDown is true iff the left mouse button is down
-        mouseDown=pygame.mouse.get_pressed()[0]
+        G.mouseDown=pygame.mouse.get_pressed()[0]
 
-        # keysDown stores the value of pygame.key.get_pressed()
-        keysDown = pygame.key.get_pressed()
-
+        # A key is an integer. Keys are named by global variables which are imported with EaselLib.py, given in the first column of the following table:
+        G.keysDown = [i for i in range(0,len(pygame.key.get_pressed())) if pygame.key.get_pressed()[i]]
         pygame.key.set_repeat (500, 30)
         #keysPressed is a set of the keys that went from up to down
-        keysPressed = []
+        G.keysPressed = []
         # get user input within one frame
         for event in pygame.event.get(): # User did something
             if event.type == pygame.QUIT: # If user clicked close
@@ -73,7 +70,7 @@ def main(G):
                 if event.key == pygame.K_ESCAPE:
                     HALT=True
                 else:
-                    keysPressed.append(chr(event.key))
+                    G.keysPressed.append(chr(event.key))
 
         # update the game with user input
         #IN = UserInput([mouseX,mouseY,oldMouseDown,mouseDown,oldKeysDown,keysDown,keysPressed])
@@ -90,5 +87,5 @@ def play(game):
     G = __import__(game)
     # call the game engine to play the game using the functions defined in the game file
     main(G)
-play("boxClick")
-#play("breakout")
+#play("boxClick")
+play("breakout")

@@ -3,17 +3,13 @@ Qianji Zheng
 July 2014
 
 '''
-import Drawing
+from EaselLib import *
 def point(x,y):
     return (x,y)
 def color(r,g,b):
     return (r,g,b)
 def click(cl,p):
     return (cl,p)
-def gameInput(cl,k):
-    return (cl,k)
-def text(s,p,n,c):
-    return ("txt",s,p,n,c)
 def brick(tl,tr,bl,br):
     return (tl,tr,bl,br)
 def ball(c,r,x,y):
@@ -22,17 +18,9 @@ def ball(c,r,x,y):
 def paddle(tl,tr,bl,br):
     return (tl,tr,bl,br)
 
-def segment(p,r,c):
-    return ("seg",p,r,c)
-
 def buildState(ba,p,br,c,d,u,e,t):
     return (ba,p,br,c,d,u,e,t)
 
-def fTri(p,q,r,c):
-    return ("fTri",p,q,r,c)
-
-def disc(p,r,c):
-    return ("disc",p,r,c)
 dBlack = color(0, 0, 0)
 dRed = color(255, 0, 0)
 dOrange = color(255, 128, 0)
@@ -46,7 +34,7 @@ boardTL = point(-100, 400)
 boardTR = point(500, 400)
 boardBL = point(-100, -400)
 boardBR = point(500, -400)
-reset = text("RESET GAME", point(-400,350), 25, dGreen)
+reset = txt("RESET GAME", point(-400,350), 25, dGreen)
 
 pTL = point(155, -300)
 pTR = point(245, -300)
@@ -173,15 +161,15 @@ paddleStart = paddle(pTL, pTR, pBL, pBR)
 
 def brickStart():
     return [brick1, brick2, brick3, brick4, brick5, brick6, brick7, brick8, brick9, brick10, brick11, brick12, brick13, brick14, brick15, brick5t, brick15t, brick10t]
-topBorder = segment(boardTL, boardTR, dBlack)
-leftBorder = segment(boardTL, boardBL, dBlack)
-rightBorder = segment(boardTR, boardBR, dBlack)
-botBorder = segment(boardBL, boardBR, dBlack)
+topBorder = seg(boardTL, boardTR, dBlack)
+leftBorder = seg(boardTL, boardBL, dBlack)
+rightBorder = seg(boardTR, boardBR, dBlack)
+botBorder = seg(boardBL, boardBR, dBlack)
 
-rtBorder = segment(resetTL, resetTR, dGreen)
-rlBorder = segment(resetTL, resetBL, dGreen)
-rrBorder = segment(resetTR, resetBR, dGreen)
-rbBorder = segment(resetBL, resetBR, dGreen)
+rtBorder = seg(resetTL, resetTR, dGreen)
+rlBorder = seg(resetTL, resetBL, dGreen)
+rrBorder = seg(resetTR, resetBR, dGreen)
+rbBorder = seg(resetBL, resetBR, dGreen)
 
 staticImgs = [reset, topBorder, leftBorder, rightBorder, botBorder, rtBorder, rlBorder, rrBorder, rbBorder]
 
@@ -196,30 +184,32 @@ def init():
 def windowDimensions():
     return(1000,800)
 
-def update(IN):
+def update():
     global S
-    keysPressed = IN.keysPressed
-    keysDown = IN.keysDown
     ballMove= sClean(sHelper(motionHelper(S)))
     paddleMoveL = paddleHelper(ballMove, False)
     paddleMoveR = paddleHelper(ballMove, True)
     S = winState if len(S[2])==0 else \
-            initState if clickReset(IN) else \
+            initState if clickReset() else \
             deadState if deadthCollide(S[0]) else \
-            paddleMoveR if equalList(keysPressed,"d") else \
-            paddleMoveL if keysDown[pygame.K_a] else \
+            paddleMoveR if rightDown() else \
+            paddleMoveL if leftDown() else \
             ballMove 
 
-def sounds(IN):
+def leftDown():
+    return K_LEFT in keysDown or K_a in keysDown
+def rightDown():
+    return K_RIGHT in keysDown or K_d in keysDown
+def sounds():
     global S
     if S == deadState:
-        return ["boing"]
+        return [BOING]
     if S == winState:
-        return ["bang"]
+        return [BANG]
     if collided():
-        return ["ding"]
+        return [DING]
     if brickCollide(S[0],S[1]) in ["b","v","h"]:
-        return ["bang"]
+        return [BANG]
 def collided():
     global S
     tempB=S[0]
@@ -228,12 +218,12 @@ def collided():
             return True
     return False
 
-def mouseClick(I):
-    return I.mouseDown and not I.oldMouseDown
+def mouseClick():
+    return mouseDown and not oldMouseDown
 
-def clickReset(I):
-    clicked = mouseClick(I)
-    click = I.mouseX, I.mouseY
+def clickReset():
+    clicked = mouseClick()
+    click = mouseX, mouseY
     return clicked and inBox(click,point(-500,400),point(-300,400),point(-500,300),point(-300,300))
 
 def inBox(click,topL,topR,botL,botR):
@@ -388,8 +378,8 @@ def sClean(S):
 def display():
     global S
     return staticImgs + ballImg(S[0]) +padImg(S[1]) + brImg(S[2]) if not S[4] and not S[3] else \
-            staticImgs + [text("You win",point(215,0),65,dBlue)]  if S[3] else \
-            staticImgs + [text("You died",point(215,0),65,dRed)]
+            staticImgs + [txt("You win",point(215,0),65,dBlue)]  if S[3] else \
+            staticImgs + [txt("You died",point(215,0),65,dRed)]
 
 def ballImg(b):
     p=b[0]
@@ -405,7 +395,7 @@ def boxImg(L,c):
     TR=L[1]
     BL=L[2]
     BR=L[3]
-    return [fTri(TL, BR, BL, c), fTri(TL, TR, BR, c),segment(TL,TR,dBlack),segment(TL, BL, dBlack), segment(BL, BR, dBlack), segment(TR, BR, dBlack)]
+    return [ftri(TL, BR, BL, c), ftri(TL, TR, BR, c),seg(TL,TR,dBlack),seg(TL, BL, dBlack), seg(BL, BR, dBlack), seg(TR, BR, dBlack)]
 
 def brImg(B):
     bricks = []

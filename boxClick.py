@@ -1,14 +1,12 @@
 from EaselLib import *
 
 def windowDimensions():
-    return (1000,800)
+    return (800,600)
 def init():
     global S
     S=1
-
 def display():
-    global S
-    return background()+line(S)
+    return background()+line()
    
 def sounds():
     if leftBoxClicked():
@@ -43,24 +41,18 @@ def update():
 
 
 def mouseClicked(): 
-    global mouseDown
-    global oldMouseDown
     return mouseDown and not oldMouseDown
 
-def line(S):
+def line():
     if S==2: return [segment(300,300,400,200)]
     if S==1: return [segment(200,300,300,200)]
 
 def leftBoxClicked():
-    global mouseX
-    global mouseY
     click = mouseClicked()
     (x,y) = mouseX,mouseY
     return click and x<300 and x>200 and y<300 and y>200
-
+    (x,y) = mouseX,mouseY
 def rightBoxClicked():
-    global mouseX
-    global mouseY
     click = mouseClicked()
     (x,y) = mouseX,mouseY
     return click and x>300 and x<400 and y<300 and y>200

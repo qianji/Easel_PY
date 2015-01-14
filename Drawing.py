@@ -169,5 +169,5 @@ def txt(S, p, n, C):
     return ("txt",S,p,n,C)
 
 def disc(p, r, C):
-    return ("disc",p,r,c)
+    return ("disc",p,r,C)
 
