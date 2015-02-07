@@ -5,15 +5,24 @@
 # Texas Tech Dept. of Computer Science
 # January 3, 2015
 
-import pygame
+import pygame,os
+# use a global image library to store the images to prevent reloading for performance purpose
+_image_library={}
 
-# ScreenSize is the ScreenSize of the display window, (width, height)
-
-def isPoint(I):
-    '''image -> bool
+# draw the list of images to screen 
+def drawImages(screen,images):
+    WHITE = (255,255,255)
+    screen.fill(WHITE)
+    for x in images:
+        if x.isDrawable(screen):
+            x.draw(screen)
+        else:
+            print("error drawing",x)
+def isPoint(I,screen):
+    '''image * surface -> bool
     '''
     # extact the tuple from the LED point
-    W,H=ScreenSize
+    W,H=screen.get_size()
     if isinstance(I,tuple):
         point = I
         if len(point)==2:
@@ -29,145 +38,167 @@ def isColor(I):
             return all(0<=c and c<=256 for c in color)
     return False
 
-def isSegment(I):
-    if isinstance(I,tuple):
-        segment = I
-        if len(segment)==4:
-            t,p,q,c=segment
-            return t=="seg" and isPoint(p) and isPoint(q) and isColor(c)
-    return False
+class Image:
+    '''
+    An image is  a segment, circle, filled triangle, text image, disc or an image loaded from a file. 
+    Image should be written as a polymorphic class, with a different draw function for each kind of image. 
+    '''
+    def __init__(self):
+        pass
+    def draw(self):
+        raise NotImplementedError("Subclass must implement abstract method")
+    def isDrawable(self,screen):
+        raise NotImplementedError("Subclass must implement abstract method")
 
-def isTriangle(I):
-    if isinstance(I,tuple):
-        triangle = I
-        if len(triangle)==5:
-            t,p,q,r,c=triangle
-            return t=="fTri" and isNonCollinear(p,q,r) and isColor(c)
-    return False
+class seg(Image):
+    '''
+    A segment is written seg( p,q,C) where p and q are points, interpreted as the endpoints of the segment, and C is a color. 
+    '''
+    def __init__(self,p,q,c):
+        self.category = "seg"
+        self.start = p
+        self.end = q
+        self.color = c
 
-def isNonCollinear(p,q,r):
-    if isPoint(p) and isPoint(q) and isPoint(r):
-        return not slope(p,q)==slope(q,r)
-    return False
+    def draw(self,screen):
+        (x1,y1),(x2,y2),color= self.start, self.end,self.color
+        W,H=screen.get_size()
+        p1 = [x1+W/2,H/2-y1]
+        p2 = [x2+W/2,H/2-y2]
+        pygame.draw.line(screen, tuple(color), p1,p2, 2)
 
-def slope(p,q):
-    if isPoint(p) and isPoint(q):
-        (px,py)=p
-        (qx,qy)=q
-        if not px-qx==0:
-            return float(py-qy)/float(px-qx)
-        else:
-            return None
+    def isDrawable(self,screen):
+        return isPoint(self.start,screen) and isPoint(self.end,screen) and isColor(self.color)
+    
+class circ(Image):
+    '''
+    A circle is written circ( p, r, C)  where p is a point, r is a positive integer, and C is a color. 
+    We interpret p and r as the center and radius of the circle, respectively.
+    '''
+    def __init__(self,p,r,c):
+        self.category = "circ"
+        self.center = p
+        self.radius = r
+        self.color = c
+    def draw(self,screen):
+        (x,y),radius,color= self.center, self.radius,self.color
+        x=int(x)
+        y=int(y)
+        W,H=screen.get_size()
+        center = [x+W//2,H//2-y]
+        pygame.draw.circle(screen, tuple(color), center, radius,1)
+    def isDrawable(self,screen):
+        return isPoint(self.center,screen) and isinstance(self.radius,int) and self.radius>0 and isColor(self.color)
+        
+class disc(Image):
+    '''
+    A Disc is written disc(p, r, C)   where p is a point, r is a positive integer, and C is a color.
+    We interpret p and r as the center and radius of the circle, respectively.
+    '''
+    def __init__(self,p,r,c):
+        self.category = "disc"
+        self.center = p
+        self.radius = r
+        self.color = c
+    def draw(self,screen):
+        (x,y),radius,color= self.center, self.radius,self.color
+        x=int(x)
+        y=int(y)
+        W,H=screen.get_size()
+        center = [x+W//2,H//2-y]
+        pygame.draw.circle(screen, tuple(color), center, radius,0)
+    def isDrawable(self,screen):
+        return isPoint(self.center,screen) and isinstance(self.radius,int) and self.radius>0 and isColor(self.color)        
+    def __str__(self):
+        return "disc("+str((self.center)) +","+ str(self.radius) + ")"
+class txt(Image):
+    '''
+    A text image is written txt(S, p, n, C) where S is a string, p a point, n integer in [4,100], and C is a color.
+    The text image  txt(S, p, n, C)  represents the text string S, displayed with height n centered at p with  color C.
+    '''
+    def __init__(self,s,p,n,c):
+        self.category = "txt"
+        self.text = s
+        self.center = p
+        self.height = n
+        self.color = c
+    def draw(self,screen):
+        string,center,fontScreenSize,color = self.text,self.center,self.height,self.color
+        [x,y]= center
+        # (0,0) is left botton
+        W,H=screen.get_size()
+        y=H/2-y
+        x=W/2+x
+        T = string
+        if pygame.font:
+            font = pygame.font.Font(None, fontScreenSize)
+            text = font.render(T, 1, color)
+            textpos = text.get_rect(centerx=int(x),centery=int(y))
+            #screen.blit(text, [x,y])
+            screen.blit(text, textpos)
+    def isDrawable(self,screen):
+        return isinstance(self.text,str) and isPoint(self.center,screen) and isColor(self.color) and isinstance(self.height,int) and self.height in range(4,101)
 
-def isCircle(I):
-    if isinstance(I,tuple):
-        circle = I
-        if len(circle)==4:
-            t,p,r,c=circle
-            return t=="circ" and isPoint(p) and isinstance(r,int) and r>0 and isColor(c)
-    return False
+class ftri(Image):
+    '''
+    A filled triangle is written ftri( p, q, r, C) where p, q, and r are points and C is a color. 
+    The filled triangle ftri(p, q, r, C), where p, q, and r are noncollinear points and C is a color, represents the filled triangle with vertices p, q, and r, of color C.
+    '''
+    def __init__(self,p,q,r,c):
+        self.category = "fTri"
+        self.v1 = p
+        self.v2 = q
+        self.v3 = r
+        self.color = c
+    def draw(self,screen):
+        p,q,r,color= self.v1,self.v2,self.v3,self.color
+        W,H=screen.get_size()
+        p=(p[0]+W/2,H/2-p[1])
+        q=(q[0]+W/2,H/2-q[1])
+        r=(r[0]+W/2,H/2-r[1])
+        pygame.draw.polygon(screen, tuple(color), [p,q,r], 0)
 
-def isDisc(I):
-    if isinstance(I,tuple):
-        circle = I
-        if len(circle)==4:
-            t,p,r,c=circle
-            return t=="disc" and isPoint(p) and isinstance(r,int) and r>0 and isColor(c)
-    return False
+    def isDrawable(self,screen):
+        return self.isNonCollinear(self.v1,self.v2,self.v3,screen) and isColor(self.color)
+    
+    def isNonCollinear(self,p,q,r,screen):
+        if isPoint(p,screen) and isPoint(q,screen) and isPoint(r,screen):
+            return not self.slope(p,q,screen)==self.slope(q,r,screen)
+        return False
+    def slope(self,p,q,screen):
+        if isPoint(p,screen) and isPoint(q,screen):
+            (px,py)=p
+            (qx,qy)=q
+            if not px-qx==0:
+                return float(py-qy)/float(px-qx)
+            else:
+                return None
 
-def isText(I):
-    if isinstance(I,tuple):
-        text = I
-        if len(text)==5:
-            t,s,p,n,c=text
-            return t=="txt" and isinstance(s,str) and isPoint(p) and isColor(c) and isinstance(n,int) and n in range(4,101)
-    return False
+class loadImageFile(Image):
+    '''
+    A file image is a triple (x,m,n) where x is an image loaded from a file and m and n are integers. 
+    '''
+    def __init__ (self,name,x,y):
+        self.category = "load"
+        self.image = self.get_image(name)
+        self.pos = (x,y)
+        
+    def get_image(self,name):
+        global _image_library
+        image = _image_library.get(name)
+        if image == None:
+            fullname = os.path.join('images', name)        
+            image = pygame.image.load(fullname)
+            _image_library[name] = image
+        return image
 
-def isClick(C):
-    return isPoint(C) or C==None
+    def draw(self,screen):
+        image,p = self.image,self.pos
+        W,H=screen.get_size()
+        p=(p[0]+W/2,H/2-p[1])
+        screen.blit(image,p)
 
-def drawSegment(screen,L):
-    tup,(x1,y1),(x2,y2),color=L
-    W,H=ScreenSize
-    p1 = [x1+W/2,H/2-y1]
-    p2 = [x2+W/2,H/2-y2]
-    pygame.draw.line(screen, tuple(color), p1,p2, 2)
-
-def drawCircle(screen,C):
-    tup,(x,y),radius,color= C
-    x=int(x)
-    y=int(y)
-    W,H=ScreenSize
-    center = [x+W//2,H//2-y]
-    pygame.draw.circle(screen, tuple(color), center, radius,1)
-
-def drawDisc(screen,C):
-    tup,(x,y),radius,color= C
-    x=int(x)
-    y=int(y)
-    W,H=ScreenSize
-    center = [x+W//2,H//2-y]
-    pygame.draw.circle(screen, tuple(color), center, radius,0)
-
-def drawText(screen,Text):
-    (tup,string,center,fontScreenSize,color) = Text
-    [x,y]= center
-    # (0,0) is left botton
-    W,H=ScreenSize    
-    y=H/2-y
-    x=W/2+x
-    #string = prettyString(string)
-    T = string
-    if pygame.font:
-        font = pygame.font.Font(None, fontScreenSize)
-        text = font.render(T, 1, color)
-        textpos = text.get_rect(centerx=int(x),centery=int(y))
-        #screen.blit(text, [x,y])
-        screen.blit(text, textpos)
-
-def drawTriangle(screen,Tri):
-    tup,p,q,r,color= Tri
-    W,H=ScreenSize
-    p=(p[0]+W/2,H/2-p[1])
-    q=(q[0]+W/2,H/2-q[1])
-    r=(r[0]+W/2,H/2-r[1])
-    pygame.draw.polygon(screen, tuple(color), [p,q,r], 0)
-
-def drawImages(screen,images,s):
-
-    # Define the colors we will use in RGB format
-
-    # All drawing code happens after the for loop and but
-    # inside the main while done==False loop.
-     
-    # Clear the screen and set the screen background
-    global ScreenSize
-    ScreenSize = s
-    WHITE = (255,255,255)
-    screen.fill(WHITE)
-    #print(images)
-    for x in images:
-        #draw segment
-        if isSegment(x): 
-            drawSegment(screen,x)
-        # draw circle
-        elif isCircle(x): drawCircle(screen,x)
-        elif isDisc(x): drawDisc(screen,x)
-        elif isText(x): drawText(screen,x)
-        elif isTriangle(x): drawTriangle(screen,x)
-
-def seg(p,q,c):
-    return ("seg",p,q,c)
-
-def circ(p,r,c):
-    return ("circ",p,r,c)
-
-def ftri(p,q,r,c):
-    return ("fTri",p,q,r,c)
-
-def txt(S, p, n, C):
-    return ("txt",S,p,n,C)
-
-def disc(p, r, C):
-    return ("disc",p,r,C)
+    def isDrawable(self,screen):
+        return isinstance(self.image,pygame.Surface) and isPoint(self.pos,screen)
+    
 

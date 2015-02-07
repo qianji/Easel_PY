@@ -34,7 +34,7 @@ def main(G):
         # if display() is defined,display all the images in the list returned by display()
         if "display" in dir(G):
             images = G.display()
-            drawImages(Screen,images,WD)
+            drawImages(Screen,images)
             pygame.display.flip()
 
         # This limits the while loop to a max of frameRate times per second.
@@ -88,4 +88,5 @@ def play(game):
     # call the game engine to play the game using the functions defined in the game file
     main(G)
 #play("boxClick")
-play("breakout")
+play("spaceChase")
+#play("breakout")
