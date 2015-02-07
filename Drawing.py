@@ -6,10 +6,11 @@
 # January 3, 2015
 
 import pygame,os
+
 # use a global image library to store the images to prevent reloading for performance purpose
 _image_library={}
 
-# draw the list of images to screen 
+# draw the list of images to the screen 
 def drawImages(screen,images):
     WHITE = (255,255,255)
     screen.fill(WHITE)
@@ -17,23 +18,25 @@ def drawImages(screen,images):
         if x.isDrawable(screen):
             x.draw(screen)
         else:
-            print("error drawing",x)
-def isPoint(I,screen):
+            print("Error drawing",x)
+
+# isPoint(point,screen) is true iff point is a point in the screen's dimension
+def isPoint(point,screen):
     '''image * surface -> bool
+    A point a pair (x,y)  where x and y are integers. 
+    The point (x,y) is thought of in a coordinate plane with (0,0) in the center of the game screen, the x-axis point right and y axis pointing up. 
     '''
-    # extact the tuple from the LED point
     W,H=screen.get_size()
-    if isinstance(I,tuple):
-        point = I
+    if isinstance(point,tuple):
         if len(point)==2:
             x=point[0]
             y=point[1]
             return x >= -W/2 and x<=W/2 and y>=-H/2 and y<=H/2
     return False
 
-def isColor(I):
-    if isinstance(I,tuple):
-        color = I
+# A color is written (R,G,B) where R, G, and B are integers and 0 ≤ R,G,B ≤ 255
+def isColor(color):
+    if isinstance(color,tuple):
         if len(color)==3:
             return all(0<=c and c<=256 for c in color)
     return False
@@ -47,6 +50,7 @@ class Image:
         pass
     def draw(self):
         raise NotImplementedError("Subclass must implement abstract method")
+    # check to see if the image can be drawed in the screen
     def isDrawable(self,screen):
         raise NotImplementedError("Subclass must implement abstract method")
 
@@ -56,9 +60,9 @@ class seg(Image):
     '''
     def __init__(self,p,q,c):
         self.category = "seg"
-        self.start = p
-        self.end = q
-        self.color = c
+        self.start = p # the start endpoint of the segment
+        self.end = q # the end endpoint of the segment
+        self.color = c # the color of the segment
 
     def draw(self,screen):
         (x1,y1),(x2,y2),color= self.start, self.end,self.color
@@ -129,7 +133,6 @@ class txt(Image):
     def draw(self,screen):
         string,center,fontScreenSize,color = self.text,self.center,self.height,self.color
         [x,y]= center
-        # (0,0) is left botton
         W,H=screen.get_size()
         y=H/2-y
         x=W/2+x
@@ -194,9 +197,12 @@ class loadImageFile(Image):
         global _image_library
         image = _image_library.get(name)
         if image == None:
-            fullname = os.path.join('images', name)        
-            image = pygame.image.load(fullname)
-            _image_library[name] = image
+            fullname = os.path.join('images', name)
+            try:
+                image = pygame.image.load(fullname)
+                _image_library[name] = image
+            except:
+                print("Cannot load images: ",fullname)
         return image
 
     def draw(self,screen):
@@ -209,5 +215,5 @@ class loadImageFile(Image):
         return isinstance(self.image,pygame.Surface) and isPoint(self.pos,screen)
 
     def __str__(self):
-        return self.imageName + str(self.pos)
+        return "loadImageFile(" + self.imageName +","+ str(self.pos) + ")"
 
