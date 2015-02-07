@@ -182,7 +182,7 @@ def init():
     S = buildState(ballStart, paddleStart, brickStart(),0,0,[],[],0)
 
 def windowDimensions():
-    return(1000,800)
+    return(1100,800)
 
 def update():
     global S

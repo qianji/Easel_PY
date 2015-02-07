@@ -70,6 +70,8 @@ class seg(Image):
     def isDrawable(self,screen):
         return isPoint(self.start,screen) and isPoint(self.end,screen) and isColor(self.color)
     
+    def __str__(self):
+        return "seg(" + str(self.start) + "," + str(self.end) + ")"
 class circ(Image):
     '''
     A circle is written circ( p, r, C)  where p is a point, r is a positive integer, and C is a color. 
@@ -90,6 +92,8 @@ class circ(Image):
     def isDrawable(self,screen):
         return isPoint(self.center,screen) and isinstance(self.radius,int) and self.radius>0 and isColor(self.color)
         
+    def __str__(self):
+        return "circ(" + str(self.center) + "," + str(self.radius)+")"
 class disc(Image):
     '''
     A Disc is written disc(p, r, C)   where p is a point, r is a positive integer, and C is a color.
@@ -173,7 +177,9 @@ class ftri(Image):
                 return float(py-qy)/float(px-qx)
             else:
                 return None
-
+    def __str__(self):
+        return "ftri(" + str(self.v1) + "," + str(self.v2)+ "," + str(self.v3)+")"
+        
 class loadImageFile(Image):
     '''
     A file image is a triple (x,m,n) where x is an image loaded from a file and m and n are integers. 
@@ -181,6 +187,7 @@ class loadImageFile(Image):
     def __init__ (self,name,x,y):
         self.category = "load"
         self.image = self.get_image(name)
+        self.imageName = name
         self.pos = (x,y)
         
     def get_image(self,name):
@@ -200,5 +207,7 @@ class loadImageFile(Image):
 
     def isDrawable(self,screen):
         return isinstance(self.image,pygame.Surface) and isPoint(self.pos,screen)
-    
+
+    def __str__(self):
+        return self.imageName + str(self.pos)
 
