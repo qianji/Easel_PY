@@ -207,7 +207,7 @@ def sounds():
     if S == winState:
         return [loadSoundFile("bang.wav")]
     if collided():
-        return [loadSoundFile("ding.wav")]
+        return [DING]
     if brickCollide(S[0],S[1]) in ["b","v","h"]:
         return [loadSoundFile("bang.wav")]
 def collided():

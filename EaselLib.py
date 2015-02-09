@@ -1,11 +1,14 @@
 from Sounds import *
 from Drawing import *
 import pygame
-DING = "ding"
-BANG = "bang"
-BOING = "boing"
-CLAP = "clap"
-CLICK = "click"
+
+# default sounds for the game engine
+DING = loadSoundFile("ding.wav")
+BANG = loadSoundFile("bang.wav")
+BOING =loadSoundFile("boing.wav")
+CLAP = loadSoundFile("clap.wav")
+CLICK = loadSoundFile("click.wav")
+
 mouseDown =None
 mouseX = None
 mouseY = None
