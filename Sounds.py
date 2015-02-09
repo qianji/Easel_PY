@@ -4,17 +4,24 @@ time = pygame.time
 mixer = pygame.mixer
 mixer.init(11025)
 main_dir = os.path.split(os.path.abspath(__file__))[0]
-
+# use a global sound library to store the sound
+_sound_library={}
 def playSounds(S):
     if S==None:
         return
-    sounds = ["ding","boing","clap","click","bang"]
-    #file_paths = [os.path.join(main_dir,'sounds',sou+".wav") for sound in sounds]
-    for sou in S:
-        if sou in sounds:
-            file_path = os.path.join(main_dir,'sounds',sou+".wav")
-            # load the sound
-            sound = mixer.Sound(file_path)
-            # play the sound
+    for sound in S:
+        if not sound==None:
             channel = sound.play()
 
+# check to see the sound is already loaded before loading
+def loadSoundFile(name):
+    global _sound_library
+    sound = _sound_library.get(name)
+    if sound ==None:
+        try:
+            file_path = os.path.join(main_dir,'sounds',name)
+            sound = mixer.Sound(file_path)
+            _sound_library[name] = sound
+        except:
+            print("Cannot load sound: ", file_path)
+    return sound

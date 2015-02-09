@@ -203,13 +203,13 @@ def rightDown():
 def sounds():
     global S
     if S == deadState:
-        return [BOING]
+        return [loadSoundFile("boing.wav")]
     if S == winState:
-        return [BANG]
+        return [loadSoundFile("bang.wav")]
     if collided():
-        return [DING]
+        return [loadSoundFile("ding.wav")]
     if brickCollide(S[0],S[1]) in ["b","v","h"]:
-        return [BANG]
+        return [loadSoundFile("bang.wav")]
 def collided():
     global S
     tempB=S[0]
