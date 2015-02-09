@@ -4,6 +4,7 @@ time = pygame.time
 mixer = pygame.mixer
 mixer.init(11025)
 main_dir = os.path.split(os.path.abspath(__file__))[0]
+
 # use a global sound library to store the sound
 _sound_library={}
 def playSounds(S):
@@ -25,3 +26,8 @@ def loadSoundFile(name):
         except:
             print("Cannot load sound: ", file_path)
     return sound
+
+def playSound(s):
+    if s==None:
+        return
+    channel = s.play()
