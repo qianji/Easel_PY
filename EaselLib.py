@@ -185,30 +185,17 @@ class ftri(Image):
                 return None
     def __str__(self):
         return "ftri(" + str(self.v1) + "," + str(self.v2)+ "," + str(self.v3)+")"
-        
-class loadImageFile(Image):
-    '''
-    A file image is a triple (x,m,n) where x is an image loaded from a file and m and n are integers. 
-    '''
-    def __init__ (self,name,x,y):
-        self.category = "load"
-        self.image = self.get_image(name)
-        self.imageName = name
-        self.pos = (x,y)
-        
-    def get_image(self,name):
-        global _image_library
-        image = _image_library.get(name)
-        if image == None:
-            fullname = os.path.join('media', name)
-            try:
-                image = pygame.image.load(fullname)
-                _image_library[name] = image
-            except:
-                print("Cannot load images: ",fullname)
-                pygame.quit()
-        return image
 
+class fileImg(Image):
+    '''
+    A file image is written fileImg (x,m,n) where x is an image loaded from a file and m and n are integers.
+    The point (m,n) is coordinate of the top-left pixel of the image
+    '''
+    def __init__ (self,img,pos):
+        self.category = "fileImg"
+        self.image = img
+        self.pos = pos
+        
     def draw(self,screen):
         image,p = self.image,self.pos
         W,H=screen.get_size()
@@ -219,7 +206,21 @@ class loadImageFile(Image):
         return isinstance(self.image,pygame.Surface) and isPoint(self.pos,screen)
 
     def __str__(self):
-        return "loadImageFile(" + self.imageName +","+ str(self.pos) + ")"
+        return "fileImg(" + self.image +","+ str(self.pos) + ")"
+
+# load the image from the file under the sub-directory named 'media', 
+def loadImageFile(name):
+    global _image_library
+    image = _image_library.get(name)
+    if image == None:
+        fullname = os.path.join('media', name)
+        try:
+            image = pygame.image.load(fullname)
+            _image_library[name] = image
+        except:
+            print("Cannot load images: ",fullname)
+            pygame.quit()
+    return image
 
 #######################################################################################
 # Begin Define functions and class for sound playing
@@ -253,6 +254,12 @@ def loadSoundFile(name):
             pygame.quit()
     return sound
 
+def playBackGroundMusic(name):
+    if pygame.mixer:
+        music = os.path.join(main_dir, 'media', name)
+        pygame.mixer.music.load(music)
+        pygame.mixer.music.play(-1)
+        
 def playSound(s):
     if s==None:
         return

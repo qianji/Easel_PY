@@ -87,7 +87,8 @@ def play(game):
     G = __import__(game)
     # call the game engine to play the game using the functions defined in the game file
     main(G)
-play("boxClick")
+#play("boxClick")
 #play("spaceChase")
 #play("rpg")
-#play("tutorial")
+play("tutorial")
+#play("breakout")
