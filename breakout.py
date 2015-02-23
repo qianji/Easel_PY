@@ -178,7 +178,9 @@ deadState = buildState(ballDead, paddleStart, brickStart(), False, True, [], [],
 winState = buildState(ballDead, paddleStart, [], True, False, [], [], 0)
 
 def init():
-    global S
+    global S, collideSound, brickCollideSound
+    collideSound = loadSoundFile("ding.wav")
+    brickCollideSound = loadSoundFile("bang.wav")
     S = buildState(ballStart, paddleStart, brickStart(),0,0,[],[],0)
 
 def windowDimensions():
@@ -195,21 +197,30 @@ def update():
             paddleMoveR if rightDown() else \
             paddleMoveL if leftDown() else \
             ballMove 
-
 def leftDown():
     return K_LEFT in keysDown or K_a in keysDown
 def rightDown():
     return K_RIGHT in keysDown or K_d in keysDown
-def sounds():
-    global S
+#def sounds():
+    #global S
+    #if S == deadState:
+        #return [loadSoundFile("boing.wav")]
+    #if S == winState:
+        #return [loadSoundFile("bang.wav")]
+    #if collided():
+        #return [DING]
+    #if brickCollide(S[0],S[1]) in ["b","v","h"]:
+        #return [loadSoundFile("bang.wav")]
+
+def soundPlaying():
     if S == deadState:
-        return [loadSoundFile("boing.wav")]
+        playSound(DING)
     if S == winState:
-        return [loadSoundFile("bang.wav")]
+        playSound(BANG)
     if collided():
-        return [DING]
+        playSound(DING)
     if brickCollide(S[0],S[1]) in ["b","v","h"]:
-        return [loadSoundFile("bang.wav")]
+        playSound(BANG)
 def collided():
     global S
     tempB=S[0]
@@ -244,6 +255,7 @@ def paddleMove(pad,flag):
     TR=nextPaddle(pad[1],flag,l,r)
     BL = nextPaddle(pad[2],flag,l,r)
     BR = nextPaddle(pad[3],flag,l,r)
+    #playSound(BOING)
     return paddle(TL,TR,BL,BR) 
 
 def nextPaddle(p,flag,l,r):

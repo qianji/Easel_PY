@@ -1,7 +1,267 @@
-from Sounds import *
-from Drawing import *
-import pygame
+import pygame,os
+import sys
 
+
+#######################################################################################
+# Begin Define functions and class for image drawing
+#######################################################################################
+
+# use a global image library to store the images to prevent reloading for performance purpose
+_image_library={}
+
+# draw the list of images to the screen 
+def drawImages(screen,images):
+    WHITE = (255,255,255)
+    screen.fill(WHITE)
+    for x in images:
+        if x.isDrawable(screen):
+            x.draw(screen)
+        else:
+            print("Error drawing",x)
+            pygame.quit()
+
+# isPoint(point,screen) is true iff point is a point in the screen's dimension
+def isPoint(point,screen):
+    '''image * surface -> bool
+    A point a pair (x,y)  where x and y are integers. 
+    The point (x,y) is thought of in a coordinate plane with (0,0) in the center of the game screen, the x-axis point right and y axis pointing up. 
+    '''
+    W,H=screen.get_size()
+    if isinstance(point,tuple):
+        if len(point)==2:
+            x=point[0]
+            y=point[1]
+            return x >= -W/2 and x<=W/2 and y>=-H/2 and y<=H/2
+    return False
+
+# A color is written (R,G,B) where R, G, and B are integers and 0 ≤ R,G,B ≤ 255
+def isColor(color):
+    if isinstance(color,tuple):
+        if len(color)==3:
+            return all(0<=c and c<=256 for c in color)
+    return False
+
+##############
+# define images class and its sub-class
+##############
+class Image:
+    '''
+    An image is  a segment, circle, filled triangle, text image, disc or an image loaded from a file. 
+    Image should be written as a polymorphic class, with a different draw function for each kind of image. 
+    '''
+    def __init__(self):
+        pass
+    def draw(self):
+        raise NotImplementedError("Subclass must implement abstract method")
+    # check to see if the image can be drawed in the screen
+    def isDrawable(self,screen):
+        raise NotImplementedError("Subclass must implement abstract method")
+
+class seg(Image):
+    '''
+    A segment is written seg( p,q,C) where p and q are points, interpreted as the endpoints of the segment, and C is a color. 
+    '''
+    def __init__(self,p,q,c):
+        self.category = "seg"
+        self.start = p # the start endpoint of the segment
+        self.end = q # the end endpoint of the segment
+        self.color = c # the color of the segment
+
+    def draw(self,screen):
+        (x1,y1),(x2,y2),color= self.start, self.end,self.color
+        W,H=screen.get_size()
+        p1 = [x1+W/2,H/2-y1]
+        p2 = [x2+W/2,H/2-y2]
+        pygame.draw.line(screen, tuple(color), p1,p2, 2)
+
+    def isDrawable(self,screen):
+        return isPoint(self.start,screen) and isPoint(self.end,screen) and isColor(self.color)
+    
+    def __str__(self):
+        return "seg(" + str(self.start) + "," + str(self.end) + ")"
+class circ(Image):
+    '''
+    A circle is written circ( p, r, C)  where p is a point, r is a positive integer, and C is a color. 
+    We interpret p and r as the center and radius of the circle, respectively.
+    '''
+    def __init__(self,p,r,c):
+        self.category = "circ"
+        self.center = p
+        self.radius = r
+        self.color = c
+    def draw(self,screen):
+        (x,y),radius,color= self.center, self.radius,self.color
+        x=int(x)
+        y=int(y)
+        W,H=screen.get_size()
+        center = [x+W//2,H//2-y]
+        pygame.draw.circle(screen, tuple(color), center, radius,1)
+    def isDrawable(self,screen):
+        return isPoint(self.center,screen) and isinstance(self.radius,int) and self.radius>0 and isColor(self.color)
+        
+    def __str__(self):
+        return "circ(" + str(self.center) + "," + str(self.radius)+")"
+class disc(Image):
+    '''
+    A Disc is written disc(p, r, C)   where p is a point, r is a positive integer, and C is a color.
+    We interpret p and r as the center and radius of the circle, respectively.
+    '''
+    def __init__(self,p,r,c):
+        self.category = "disc"
+        self.center = p
+        self.radius = r
+        self.color = c
+    def draw(self,screen):
+        (x,y),radius,color= self.center, self.radius,self.color
+        x=int(x)
+        y=int(y)
+        W,H=screen.get_size()
+        center = [x+W//2,H//2-y]
+        pygame.draw.circle(screen, tuple(color), center, radius,0)
+    def isDrawable(self,screen):
+        return isPoint(self.center,screen) and isinstance(self.radius,int) and self.radius>0 and isColor(self.color)        
+    def __str__(self):
+        return "disc("+str((self.center)) +","+ str(self.radius) + ")"
+class txt(Image):
+    '''
+    A text image is written txt(S, p, n, C) where S is a string, p a point, n integer in [4,100], and C is a color.
+    The text image  txt(S, p, n, C)  represents the text string S, displayed with height n centered at p with  color C.
+    '''
+    def __init__(self,s,p,n,c):
+        self.category = "txt"
+        self.text = s
+        self.center = p
+        self.height = n
+        self.color = c
+    def draw(self,screen):
+        string,center,fontScreenSize,color = self.text,self.center,self.height,self.color
+        [x,y]= center
+        W,H=screen.get_size()
+        y=H/2-y
+        x=W/2+x
+        T = string
+        if pygame.font:
+            font = pygame.font.Font(None, fontScreenSize)
+            text = font.render(T, 1, color)
+            textpos = text.get_rect(centerx=int(x),centery=int(y))
+            #screen.blit(text, [x,y])
+            screen.blit(text, textpos)
+    def isDrawable(self,screen):
+        return isinstance(self.text,str) and isPoint(self.center,screen) and isColor(self.color) and isinstance(self.height,int) and self.height in range(4,101)
+
+class ftri(Image):
+    '''
+    A filled triangle is written ftri( p, q, r, C) where p, q, and r are points and C is a color. 
+    The filled triangle ftri(p, q, r, C), where p, q, and r are noncollinear points and C is a color, represents the filled triangle with vertices p, q, and r, of color C.
+    '''
+    def __init__(self,p,q,r,c):
+        self.category = "fTri"
+        self.v1 = p
+        self.v2 = q
+        self.v3 = r
+        self.color = c
+    def draw(self,screen):
+        p,q,r,color= self.v1,self.v2,self.v3,self.color
+        W,H=screen.get_size()
+        p=(p[0]+W/2,H/2-p[1])
+        q=(q[0]+W/2,H/2-q[1])
+        r=(r[0]+W/2,H/2-r[1])
+        pygame.draw.polygon(screen, tuple(color), [p,q,r], 0)
+
+    def isDrawable(self,screen):
+        return self.isNonCollinear(self.v1,self.v2,self.v3,screen) and isColor(self.color)
+    
+    def isNonCollinear(self,p,q,r,screen):
+        if isPoint(p,screen) and isPoint(q,screen) and isPoint(r,screen):
+            return not self.slope(p,q,screen)==self.slope(q,r,screen)
+        return False
+    def slope(self,p,q,screen):
+        if isPoint(p,screen) and isPoint(q,screen):
+            (px,py)=p
+            (qx,qy)=q
+            if not px-qx==0:
+                return float(py-qy)/float(px-qx)
+            else:
+                return None
+    def __str__(self):
+        return "ftri(" + str(self.v1) + "," + str(self.v2)+ "," + str(self.v3)+")"
+        
+class loadImageFile(Image):
+    '''
+    A file image is a triple (x,m,n) where x is an image loaded from a file and m and n are integers. 
+    '''
+    def __init__ (self,name,x,y):
+        self.category = "load"
+        self.image = self.get_image(name)
+        self.imageName = name
+        self.pos = (x,y)
+        
+    def get_image(self,name):
+        global _image_library
+        image = _image_library.get(name)
+        if image == None:
+            fullname = os.path.join('media', name)
+            try:
+                image = pygame.image.load(fullname)
+                _image_library[name] = image
+            except:
+                print("Cannot load images: ",fullname)
+                pygame.quit()
+        return image
+
+    def draw(self,screen):
+        image,p = self.image,self.pos
+        W,H=screen.get_size()
+        p=(p[0]+W/2,H/2-p[1])
+        screen.blit(image,p)
+
+    def isDrawable(self,screen):
+        return isinstance(self.image,pygame.Surface) and isPoint(self.pos,screen)
+
+    def __str__(self):
+        return "loadImageFile(" + self.imageName +","+ str(self.pos) + ")"
+
+#######################################################################################
+# Begin Define functions and class for sound playing
+#######################################################################################
+import pygame.mixer, pygame.time
+time = pygame.time
+mixer = pygame.mixer
+mixer.init(11025)
+main_dir = os.path.split(os.path.abspath(__file__))[0]
+
+# use a global sound library to store the sound
+_sound_library={}
+def playSounds(S):
+    if S==None:
+        return
+    for sound in S:
+        if not sound==None:
+            channel = sound.play()
+
+# check to see the sound is already loaded before loading
+def loadSoundFile(name):
+    global _sound_library
+    sound = _sound_library.get(name)
+    if sound ==None:
+        try:
+            file_path = os.path.join(main_dir,'media',name)
+            sound = mixer.Sound(file_path)
+            _sound_library[name] = sound
+        except:
+            print("Cannot load sound: ", file_path)
+            pygame.quit()
+    return sound
+
+def playSound(s):
+    if s==None:
+        return
+    channel = s.play()
+
+
+####################################################
+# Begin defining global variables
+####################################################
 # default sounds for the game engine
 DING = loadSoundFile("ding.wav")
 BANG = loadSoundFile("bang.wav")
@@ -9,6 +269,7 @@ BOING =loadSoundFile("boing.wav")
 CLAP = loadSoundFile("clap.wav")
 CLICK = loadSoundFile("click.wav")
 
+# define global varibale for keyboard and mouse action
 mouseDown =None
 mouseX = None
 mouseY = None
@@ -17,6 +278,7 @@ oldKeysDown = None
 oldMouseDown = None
 keysPressed = None
 
+# define key
 # A key is an integer. Keys are named by global variables which are imported with EaselLib.py, given in the first column of the following table:
 K_BACKSPACE  = pygame.K_BACKSPACE   
 K_TAB        = pygame.K_TAB         
