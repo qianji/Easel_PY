@@ -228,7 +228,7 @@ def loadImageFile(name):
 import pygame.mixer, pygame.time
 time = pygame.time
 mixer = pygame.mixer
-mixer.init(11025)
+mixer.init(frequency=11050, size=-16, channels=2, buffer=512)
 main_dir = os.path.split(os.path.abspath(__file__))[0]
 
 # use a global sound library to store the sound
