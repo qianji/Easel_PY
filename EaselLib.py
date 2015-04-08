@@ -229,6 +229,7 @@ import pygame.mixer, pygame.time
 time = pygame.time
 mixer = pygame.mixer
 mixer.init(frequency=11050, size=-16, channels=2, buffer=512)
+#mixer.init(11025)
 main_dir = os.path.split(os.path.abspath(__file__))[0]
 
 # use a global sound library to store the sound
@@ -238,7 +239,7 @@ def playSounds(S):
         return
     for sound in S:
         if not sound==None:
-            channel = sound.play()
+            channel = sound.play(loops=0, maxtime=0, fade_ms=0)
 
 # check to see the sound is already loaded before loading
 def loadSoundFile(name):
@@ -263,7 +264,7 @@ def playBackGroundMusic(name):
 def playSound(s):
     if s==None:
         return
-    channel = s.play()
+    channel = s.play(loops=0, maxtime=0, fade_ms=0)
 
 
 ####################################################
