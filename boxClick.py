@@ -18,7 +18,7 @@ def sounds():
     else:
         return []
 def background():
-    W,H = windowDimensions()
+    W,H = (800,600)
     L1 = segment(200,200,200,300)
     L2 = segment(400,200,400,300)
     L3 = segment(200,300,400,300)
