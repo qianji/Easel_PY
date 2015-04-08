@@ -90,5 +90,5 @@ def play(game):
 #play("boxClick")
 #play("spaceChase")
 #play("rpg")
-play("tutorial")
+#play("tutorial")
 #play("breakout")
