@@ -2,6 +2,7 @@ import sys, os, pygame
 from pygame.locals import *
 from pygame.compat import geterror
 from EaselLib import *
+import traceback
 def main(G):
     # Initialize the game engine
     pygame.init()
@@ -89,7 +90,13 @@ def play(game):
     # import the game file
     G = __import__(game)
     # call the game engine to play the game using the functions defined in the game file
-    main(G)
+    try:
+        main(G)
+    except:
+        # print out the error message if there is an error in the game file
+        print(traceback.format_exc())
+        pygame.quit()
+        return
 #play("boxClick")
 #play("spaceChase")
 #play("rpg")
