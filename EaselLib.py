@@ -228,7 +228,7 @@ def loadImageFile(name):
 import pygame.mixer, pygame.time
 time = pygame.time
 mixer = pygame.mixer
-mixer.init(frequency=11050, size=-16, channels=2, buffer=512)
+mixer.init(frequency=11025, size=-16, channels=2,buffer=512)
 #mixer.init(11025)
 main_dir = os.path.split(os.path.abspath(__file__))[0]
 
