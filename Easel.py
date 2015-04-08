@@ -83,6 +83,9 @@ def main(G):
     pygame.quit()
 
 def play(game):
+    # clear imported module cache
+    if game in sys.modules:
+        del sys.modules[game]
     # import the game file
     G = __import__(game)
     # call the game engine to play the game using the functions defined in the game file
