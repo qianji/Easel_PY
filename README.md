@@ -13,3 +13,10 @@ While Python is (unfortunately) an untyped langauge, the use of TPGE requires th
 - An image is a line segment, a circle, or a displayText. 
 - An imageList is a list of images.
 - A state is whatever sort of Python data structure the student-developer wants it to be -- but they should be clear in their mind about it.
+
+The student-supplied functions consist of the following three functions, along with any helpers necessary to implement them:
+- initialState : state --InitialState() is the initial state of the program.
+- successor: state x point  → state -- successor(S,p) is the state resulting from clicking point p in state S
+- displayImages: state  → imageList -- displayImages(S) is a list containing the images to be displayed on the screen in program state S. Images occurring later in the list overwrite images that occur earlier if they overlap. 
+
+Below is an example of a trivial game created using the engine, followed by code for the game engine itself. It should run if you have Python 3.x and  graphics.py installed. 
